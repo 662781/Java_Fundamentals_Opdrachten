@@ -68,15 +68,31 @@ public class Main {
     {
         //create array
         List<Person> people = new ArrayList<>();
+        //create grades lists
+        List<Integer> gradesEmma = new ArrayList<>();
+        gradesEmma.add(54);
+        gradesEmma.add(50);
+        gradesEmma.add(66);
+        gradesEmma.add(54);
+        List<Integer> gradesJack = new ArrayList<>();
+        gradesJack.add(72);
+        gradesJack.add(68);
+        gradesJack.add(43);
+        gradesJack.add(95);
+        List<Integer> gradesMichael = new ArrayList<>();
+        gradesMichael.add(45);
+        gradesMichael.add(74);
+        gradesMichael.add(55);
+        gradesMichael.add(84);
         //create dates
         LocalDate d1 = LocalDate.of(1997 , 12 , 4);
         LocalDate d2 = LocalDate.of(1993 , 8 , 7);
         LocalDate d3 = LocalDate.of(1999 , 11 , 1);
         LocalDate d4 = LocalDate.of(1965 , 12 , 4);
         //create students and add to array
-        Person person1 = new Student(1, "emma", "emma12", "Emma", "Smith", d1, 23, "IT-02-A", 54, 50, 66, 54);
-        Person person2 = new Student(2, "jack", "jack13", "Jack", "Brown", d1, 27, "IT-02-A", 72, 68, 43, 95);
-        Person person3 = new Student(3, "michael", "michael14", "Michael", "Garcia", d1, 21, "IT-02-A", 45, 71, 55, 84);
+        Person person1 = new Student(1, "emma", "emma12", "Emma", "Smith", d1, 23, "IT-02-A", gradesEmma);
+        Person person2 = new Student(2, "jack", "jack13", "Jack", "Brown", d2, 27, "IT-02-A", gradesJack);
+        Person person3 = new Student(3, "michael", "michael14", "Michael", "Garcia", d3, 21, "IT-02-A", gradesMichael);
         //create teacher and add to array
         Person person4 = new Teacher(4, "david", "david15", "David", "Taylor", d4, 55);
 
@@ -203,8 +219,8 @@ public class Main {
         }
 
         System.out.print("Enter student id (Report Details) | Or 0 back to main menu: ");
-        System.out.println("");
         int studentId = scanner.nextInt();
+        System.out.println("");
 
         if(studentId == 0)
         {
@@ -228,6 +244,8 @@ public class Main {
     void showReportDetails(List<Person> people, Scanner scanner, Person student)
     {
         Student s = (Student) student;
+        String result = "Passed";
+        int retakes = 0;
 
         System.out.println("");
         System.out.println("Report of student " + s.firstName + " " + s.lastName);
@@ -239,13 +257,85 @@ public class Main {
         System.out.println("COURSES");
         System.out.println("");
 
-        System.out.println("Java --- " + s.javaGrade + "\nCSharp --- " + s.cSharpGrade + "\nPython --- " + s.pythonGrade + "\nPHP --- " + s.phpGrade);
+        System.out.println("Java --- " + s.grades.get(0) + "\nCSharp --- " + s.grades.get(1) + "\nPython --- " + s.grades.get(2) + "\nPHP --- " + s.grades.get(3));
 
         System.out.println("");
         System.out.println("RESULTS");
         System.out.println("");
 
-        System.out.println("Here come the results! Or not...");
+        //System.out.println("Here come the results! Or not...");
+
+        for(Integer grade: s.grades)
+        {
+            if(grade >= 0 && grade < 55)
+            {
+                result = "Not Passed";
+                retakes++;
+            }
+        }
+
+        System.out.println("Result --- " + result);
+        System.out.println("Retakes --- " + retakes);
+
+        System.out.println("A. Add (Update) Report | R. Display Reports  | B. Back to Main  | X. Exit  |");
+        System.out.println("");
+        System.out.print("Please, enter a choice: Select a menu: ");
+        String choice = scanner.next();
+
+        while(!Objects.equals(choice, "X") && !Objects.equals(choice, "x"))
+        {
+            switch (choice)
+            {
+                case "A":
+                case "a":
+                    showAddUpdateReports(people, scanner, student);
+                    break;
+                case "R":
+                case "r":
+                    showReports(people, scanner);
+                    break;
+                case "B":
+                case "b":
+                    displayEditorMenu(scanner, people);
+                case "X":
+                case "x":
+                    break;
+                default: System.out.println("Please enter a valid choice \n");
+            }
+
+            System.out.println("A. Add (Update) Report | R. Display Reports  | B. Back to Main  | X. Exit  |");
+            System.out.println("");
+            System.out.print("Select a menu: ");
+            choice = scanner.next();
+
+            System.out.println("");
+        }
+    }
+
+    void showAddUpdateReports(List<Person> people, Scanner scanner, Person student)
+    {
+        Student s = (Student)student;
+        List<Integer> newGrades = new ArrayList<>();
+
+        System.out.print("Current grade Java is: " + s.grades.get(0) + " Enter (new) grade: ");
+        int newJavaGrade = scanner.nextInt();
+
+        System.out.print("Current grade CSharp is: " + s.grades.get(1) + " Enter (new) grade: ");
+        int newCSharpGrade = scanner.nextInt();
+
+        System.out.print("Current grade Python is: " + s.grades.get(2) + " Enter (new) grade: ");
+        int newPythonGrade = scanner.nextInt();
+
+        System.out.print("Current grade PHP is: " + s.grades.get(3) + " Enter (new) grade: ");
+        int newPHPGrade = scanner.nextInt();
+
+        newGrades.add(newJavaGrade);
+        newGrades.add(newCSharpGrade);
+        newGrades.add(newPythonGrade);
+        newGrades.add(newPHPGrade);
+
+        s.grades = newGrades;
+
     }
 
 

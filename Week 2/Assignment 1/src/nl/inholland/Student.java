@@ -3,16 +3,14 @@ package nl.inholland;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Student extends Person
 {
     protected String group;
-    protected int javaGrade;
-    protected int cSharpGrade;
-    protected int pythonGrade;
-    protected int phpGrade;
     protected String result;
     protected int retakes;
+    protected List<Integer> grades;
 
 
     public Student(int id, String username, String password, String firstName, String lastName, LocalDate dateOfBirth, int age, String group)
@@ -27,13 +25,15 @@ public class Student extends Person
         this.group = group;
 
         this.access = Access.Basic;
-        this.javaGrade = 0;
-        this.cSharpGrade = 0;
-        this.pythonGrade =0;
-        this.phpGrade = 0;
+        grades = new ArrayList<>();
+
+        for (Number grade: grades)
+        {
+            grades.add(0);
+        }
     }
 
-    public Student(int id, String username, String password, String firstName, String lastName, LocalDate dateOfBirth, int age, String group, int javaGrade, int cSharpGrade, int pythonGrade, int phpGrade)
+    public Student(int id, String username, String password, String firstName, String lastName, LocalDate dateOfBirth, int age, String group, List<Integer> grades)
     {
         this.id = id;
         this.username = username;
@@ -43,10 +43,7 @@ public class Student extends Person
         this.dateOfBirth = dateOfBirth;
         this.age = age;
         this.group = group;
-        this.javaGrade = javaGrade;
-        this.cSharpGrade = cSharpGrade;
-        this.pythonGrade =pythonGrade;
-        this.phpGrade = phpGrade;
+        this.grades = grades;
 
         this.access = Access.Basic;
     }
@@ -60,7 +57,10 @@ public class Student extends Person
 
     protected void printReports()
     {
-        System.out.print(javaGrade + "  " + cSharpGrade + "  " + pythonGrade + "  " + phpGrade + "  ");
+        for (Number grade: grades)
+        {
+            System.out.print(grade + "  ");
+        }
     }
 
     protected void calcResults(int javaGrade, int cSharpGrade, int pythonGrade, int phpGrade)
