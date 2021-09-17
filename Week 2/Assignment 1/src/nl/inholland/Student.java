@@ -63,15 +63,4 @@ public class Student extends Person
         }
     }
 
-    protected void calcResults(int javaGrade, int cSharpGrade, int pythonGrade, int phpGrade)
-    {
-        if (javaGrade > 55 && cSharpGrade > 55 && pythonGrade > 55 && phpGrade > 55)
-        {
-            result = "Passed";
-        }
-        else
-        {
-            result = "Not Passed";
-        }
-    }
 }

@@ -1,5 +1,7 @@
 package nl.inholland;
 
+import java.io.FileWriter;
+import java.io.Writer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -338,6 +340,19 @@ public class Main {
 
     }
 
+    //save all current reports to text files
+    void saveReports(List<Person> people, Scanner scanner)
+    {
+        for(Person p: people)
+        {
+            if(p instanceof Student)
+            {
+                //p.
+            }
+        }
+    }
+
+
 
     //Gets the Person object from the person who is logging in, from the list
 
@@ -444,7 +459,51 @@ public class Main {
 
     void displayAdminMenu(Scanner scanner, List<Person> people)
     {
-        System.out.println("Here comes the Admin menu");
+        //System.out.println("Here comes the Admin menu");
+
+        System.out.println("S. Display Students  | T. Display Teachers  | A. Add Students   | R. Display Reports   | V. Save Reports   | X. Exit  |");
+        System.out.println("");
+        System.out.print("Please, enter a choice: ");
+        String choice = scanner.next();
+
+        System.out.println("");
+
+        while(!Objects.equals(choice, "X") && !Objects.equals(choice, "x"))
+        {
+            switch (choice)
+            {
+                case "S":
+                case "s":
+                    showStudents(people);
+                    break;
+                case "T":
+                case "t":
+                    showTeachers(people);
+                    break;
+                case "A":
+                case "a":
+                    showAddStudents(people, scanner);
+                case "X":
+                case "x":
+                    break;
+                case "R":
+                case "r":
+                    showReports(people, scanner);
+                    break;
+                case "V":
+                case "v":
+                    saveReports(people, scanner);
+                    break;
+                default: System.out.println("Please enter a valid choice\n");
+            }
+
+            System.out.println("S. Display Students  | T. Display Teachers  | A. Add Students   | R. Display Reports   | V. Save Reports   | X. Exit  |");
+            System.out.println("");
+            System.out.print("Please, enter a choice: ");
+            choice = scanner.next();
+
+            System.out.println("");
+        }
     }
     
     
