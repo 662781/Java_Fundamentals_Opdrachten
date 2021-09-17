@@ -1,10 +1,13 @@
 package nl.inholland;
 
+import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Writer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.zip.Adler32;
 
 public class Main {
 
@@ -91,17 +94,21 @@ public class Main {
         LocalDate d2 = LocalDate.of(1993 , 8 , 7);
         LocalDate d3 = LocalDate.of(1999 , 11 , 1);
         LocalDate d4 = LocalDate.of(1965 , 12 , 4);
+        LocalDate d5 = LocalDate.of(1950, 2 , 12);
         //create students and add to array
-        Person person1 = new Student(1, "emma", "emma12", "Emma", "Smith", d1, 23, "IT-02-A", gradesEmma);
-        Person person2 = new Student(2, "jack", "jack13", "Jack", "Brown", d2, 27, "IT-02-A", gradesJack);
-        Person person3 = new Student(3, "michael", "michael14", "Michael", "Garcia", d3, 21, "IT-02-A", gradesMichael);
+        Person person1 = new Student(1, "emma", "emma12", "Emma", "Smith", d1, 24, "IT-02-A", gradesEmma);
+        Person person2 = new Student(2, "jack", "jack13", "Jack", "Brown", d2, 28, "IT-02-A", gradesJack);
+        Person person3 = new Student(3, "michael", "michael14", "Michael", "Garcia", d3, 22, "IT-02-A", gradesMichael);
         //create teacher and add to array
-        Person person4 = new Teacher(4, "david", "david15", "David", "Taylor", d4, 55);
+        Person person4 = new Teacher(4, "david", "david15", "David", "Taylor", d4, 56);
+        //create admin and add to array
+        Person person5 = new Manager(5, "admin", "admin16", "Ad", "Min", d5, 71);
 
         people.add(person1);
         people.add(person2);
         people.add(person3);
         people.add(person4);
+        people.add(person5);
 
         return people;
     }
@@ -314,6 +321,120 @@ public class Main {
         }
     }
 
+    void showReportsAdmin(List<Person> people, Scanner scanner)
+    {
+        System.out.println("STUDENT RESULTS\n");
+        System.out.println("Id " + "FirstName " + "LastName " + "Birthdate " + "Age " + "Group " + "Java " + "CSharp " + "Python " + "PHP ");
+
+        for (Person p: people)
+        {
+            if (p instanceof Student)
+            {
+                p.printDetails();
+                ((Student) p).printReports();
+                System.out.println("");
+            }
+
+        }
+
+        System.out.print("Enter student id (Report Details) | Or 0 back to main menu: ");
+        int studentId = scanner.nextInt();
+        System.out.println("");
+
+        if(studentId == 0)
+        {
+            displayEditorMenu(scanner, people);
+        }
+        else if(studentId > 0)
+        {
+            for(Person p: people)
+            {
+                if (studentId == p.id && p instanceof Student)
+                {
+                    showReportDetailsAdmin(people, scanner, p);
+                }
+            }
+
+
+        }
+
+    }
+
+    void showReportDetailsAdmin(List<Person> people, Scanner scanner, Person student)
+    {
+        Student s = (Student) student;
+        String result = "Passed";
+        int retakes = 0;
+
+        System.out.println("");
+        System.out.println("Report of student " + s.firstName + " " + s.lastName);
+        System.out.println("");
+
+        System.out.println("Student Id --- " + s.id + "\nFirst Name --- " + s.firstName + "\nLast Name --- " + s.lastName + "\nAge --- " + s.age);
+        System.out.println("");
+
+        System.out.println("COURSES");
+        System.out.println("");
+
+        System.out.println("Java --- " + s.grades.get(0) + "\nCSharp --- " + s.grades.get(1) + "\nPython --- " + s.grades.get(2) + "\nPHP --- " + s.grades.get(3));
+
+        System.out.println("");
+        System.out.println("RESULTS");
+        System.out.println("");
+
+        //System.out.println("Here come the results! Or not...");
+
+        for(Integer grade: s.grades)
+        {
+            if(grade >= 0 && grade < 55)
+            {
+                result = "Not Passed";
+                retakes++;
+            }
+        }
+
+        System.out.println("Result --- " + result);
+        System.out.println("Retakes --- " + retakes);
+
+        System.out.println("A. Add (Update) Report  | V. Save Report  | R. Display Reports  | B. Back to Main  | X. Exit  |");
+        System.out.println("");
+        System.out.print("Please, enter a choice: Select a menu: ");
+        String choice = scanner.next();
+
+        while(!Objects.equals(choice, "X") && !Objects.equals(choice, "x"))
+        {
+            switch (choice)
+            {
+                case "A":
+                case "a":
+                    showAddUpdateReports(people, scanner, student);
+                    break;
+                case "R":
+                case "r":
+                    showReports(people, scanner);
+                    break;
+                case "B":
+                case "b":
+                    displayEditorMenu(scanner, people);
+                case "X":
+                case "x":
+                    break;
+                case "V":
+                case "v":
+                    saveReports(s, scanner, result, retakes);
+                    break;
+                default: System.out.println("Please enter a valid choice \n");
+            }
+
+            System.out.println("A. Add (Update) Report  | V. Save Report  | R. Display Reports  | B. Back to Main  | X. Exit  |");
+            System.out.println("");
+            System.out.print("Select a menu: ");
+            choice = scanner.next();
+
+            System.out.println("");
+        }
+    }
+
     void showAddUpdateReports(List<Person> people, Scanner scanner, Person student)
     {
         Student s = (Student)student;
@@ -341,14 +462,28 @@ public class Main {
     }
 
     //save all current reports to text files
-    void saveReports(List<Person> people, Scanner scanner)
+    void saveReports(Student s, Scanner scanner, String result, int retakes)
     {
-        for(Person p: people)
-        {
-            if(p instanceof Student)
-            {
-                //p.
+        try {
+            File myObj = new File(s.id + " " + s.firstName + " " + s.lastName + ".txt");
+            if (myObj.createNewFile()) {
+                System.out.println("File created: " + myObj.getName());
+            } else {
+                System.out.println("File already exists.");
             }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+        try {
+            FileWriter myWriter = new FileWriter(s.id + " " + s.firstName + " " + s.lastName + ".txt");
+            myWriter.write("Report of student " + s.firstName + " " + s.lastName + "\n" + "Student Id --- " + s.id + "\nFirst Name --- " + s.firstName + "\nLast Name --- " + s.lastName + "\nAge --- " + s.age + "\n" +"COURSES\n" + "Java --- " + s.grades.get(0) + "\nCSharp --- " + s.grades.get(1) + "\nPython --- " + s.grades.get(2) + "\nPHP --- " + s.grades.get(3) + "\n" + "RESULTS\n" + "Result --- " + result + "\n" + "Retakes --- " + retakes );
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
         }
     }
 
@@ -461,7 +596,7 @@ public class Main {
     {
         //System.out.println("Here comes the Admin menu");
 
-        System.out.println("S. Display Students  | T. Display Teachers  | A. Add Students   | R. Display Reports   | V. Save Reports   | X. Exit  |");
+        System.out.println("S. Display Students  | T. Display Teachers  | A. Add Students   | R. Display Reports   | X. Exit  |");
         System.out.println("");
         System.out.print("Please, enter a choice: ");
         String choice = scanner.next();
@@ -488,16 +623,12 @@ public class Main {
                     break;
                 case "R":
                 case "r":
-                    showReports(people, scanner);
-                    break;
-                case "V":
-                case "v":
-                    saveReports(people, scanner);
+                    showReportsAdmin(people, scanner);
                     break;
                 default: System.out.println("Please enter a valid choice\n");
             }
 
-            System.out.println("S. Display Students  | T. Display Teachers  | A. Add Students   | R. Display Reports   | V. Save Reports   | X. Exit  |");
+            System.out.println("S. Display Students  | T. Display Teachers  | A. Add Students   | R. Display Reports   | X. Exit  |");
             System.out.println("");
             System.out.print("Please, enter a choice: ");
             choice = scanner.next();
