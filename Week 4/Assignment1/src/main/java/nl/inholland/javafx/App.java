@@ -32,7 +32,7 @@ public class App extends Application {
         TextField txt_EuroInput = new TextField();
         Button btn_Convert = new Button("Convert Euro To Dollar");
 
-        //Set layout
+        //Set layout of grid
         grid.setPadding(new Insets(10, 10, 10, 10));
         grid.setHgap(2);
         grid.setVgap(10);
@@ -46,15 +46,15 @@ public class App extends Application {
         window.setScene(scene);
         window.show();
 
-        //Retrieve data from text field
-        int amtInEuro = Integer.parseInt(txt_EuroInput.getText());
-
         //Sets text from label if button is clicked
         btn_Convert.setOnAction(new EventHandler<ActionEvent>()
         {
             @Override
             public void handle(ActionEvent actionEvent)
             {
+                //Retrieve data from text field
+                int amtInEuro = Integer.parseInt(txt_EuroInput.getText());
+
                 lbl_Result.setText(String.valueOf(euroToDollar(amtInEuro)));
             }
         });
