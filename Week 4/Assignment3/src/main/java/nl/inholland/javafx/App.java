@@ -54,6 +54,30 @@ public class App extends Application {
 
     }
 
+    public Button[] setUpGame(int row, int col, GridPane layout){
+        Button[] buttons = new Button[9];
+
+        //Create 9 buttons and add them to the grid layout
+        for (int i = 0; i < 9; i++){
+            Button btn = new Button("_");
+            btn.setPrefSize(100, 100);
+            Font font = new Font(40);
+            btn.setFont(font);
+            buttons[i] = btn;
+
+            if (col > 2){
+                col = 0;
+                row++;
+            }
+            else if(row > 2) {
+                break;
+            }
+            layout.add(btn, row, col);
+            col++;
+        }
+        return buttons;
+    }
+
     public void playGame(Button[] playingField, Label lbl_currentTurn){
         Player player = new Player(Symbols.X);
         Player computer = new Player(Symbols.O);
@@ -63,12 +87,15 @@ public class App extends Application {
 
             //The players turn
             for(Button btn: playingField){
-                btn.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent actionEvent) {
-                        btn.setText(player.symbol.toString());
-                    }
-                });
+                if (Objects.equals(btn.getText(), "_")){
+                    btn.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent actionEvent) {
+                            btn.setText(player.symbol.toString());
+                        }
+                    });
+                }
+
             }
 
             //Checks if there's 3 of the same symbols in a row
@@ -100,30 +127,6 @@ public class App extends Application {
             alert.setTitle("You lose...");
         }
         alert.show();
-    }
-
-    public Button[] setUpGame(int row, int col, GridPane layout){
-        Button[] buttons = new Button[9];
-
-        //Create 9 buttons and add them to the grid layout
-        for (int i = 0; i < 9; i++){
-            Button btn = new Button("_");
-            btn.setPrefSize(100, 100);
-            Font font = new Font(40);
-            btn.setFont(font);
-            buttons[i] = btn;
-
-            if (col > 2){
-                col = 0;
-                row++;
-            }
-            else if(row > 2) {
-                break;
-            }
-            layout.add(btn, row, col);
-            col++;
-        }
-        return buttons;
     }
 
     public void checkWinStatus(Button[] playingField, Player player, Player computer){
