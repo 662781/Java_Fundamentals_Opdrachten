@@ -50,7 +50,7 @@ public class App extends Application {
         window.show();
 
         //Start the game
-        playGame(playingField, lbl_currentTurn);
+//        playGame(playingField, lbl_currentTurn);
 
     }
 
