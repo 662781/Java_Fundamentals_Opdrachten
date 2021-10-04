@@ -1,9 +1,11 @@
 package nl.inholland.javafx;
 
 import javafx.application.Application;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -13,11 +15,13 @@ public class App extends Application {
         window.setWidth(800);
         window.setTitle("Inholland JavaFX Starter Project");
 
-        BorderPane pane = new BorderPane();
-        Label hello = new Label("Hello World");
-        pane.setCenter(hello);
+        GridPane pane = new GridPane();
+
+        pane.setId("GridLayout");
 
         Scene scene = new Scene(pane);
+        scene.getStylesheets().add("resources/css/LoginStyle.css");
+
         window.setScene(scene);
         window.show();
     }
