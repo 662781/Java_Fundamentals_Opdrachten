@@ -1,7 +1,29 @@
 .root {
-    -fx-background-color: #A7C8F2;
+    -fx-background-color: white;
 }
 
-#GridLayout {
-    -fx-background-color: #044e04;
+#TitleLabel{
+    -fx-font-size: 30;
+    -fx-font-weight: bold;
+    -fx-background-color: black;
+    -fx-text-fill: lightgrey;
+    -fx-alignment: center;
 }
+
+.blueDetail{
+    -fx-background-color: #256a9b;
+}
+
+#LoginButton{
+    -fx-text-fill: white;
+    -fx-background-color: #256a9b;
+    -fx-font-size: 20;
+}
+
+.text-field{
+    -fx-font-size: 20;
+
+}
+
+
+
