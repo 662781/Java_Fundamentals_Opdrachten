@@ -72,7 +72,7 @@ public class LoginWindow extends WindowSuperClass {
                     if(passwordCheck(usernameInputText.getText(), passwordInputText.getText(), people)){
 
                         //Show alert when logged in successfully
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Login");
                         //Gets the info of the person logging in
                         Person p = getPersonInfo(usernameInputText.getText(), people);
