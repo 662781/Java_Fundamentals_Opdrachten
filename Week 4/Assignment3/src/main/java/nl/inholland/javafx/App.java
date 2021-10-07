@@ -50,7 +50,7 @@ public class App extends Application {
         window.show();
 
         //Start the game
-//        playGame(playingField, lbl_currentTurn);
+        playGame(playingField, lbl_currentTurn);
 
     }
 
@@ -83,7 +83,7 @@ public class App extends Application {
         Player computer = new Player(Symbols.O);
         Random rnd = new Random();
 
-        //while(!player.winStatus && !computer.winStatus){
+        while(!player.winStatus && !computer.winStatus){
 
             //The players turn
             for(Button btn: playingField){
@@ -116,7 +116,7 @@ public class App extends Application {
             //Checks if there's 3 of the same symbols in a row
             checkWinStatus(playingField, player, computer);
 
-        //}
+        }
 
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -140,7 +140,7 @@ public class App extends Application {
         }
     }
 
-    private void calcWinStatus(Button[] playingField, Player player, int i) {
+    public void calcWinStatus(Button[] playingField, Player player, int i) {
         switch(i){
             case 0:
                 //Check horizontal
