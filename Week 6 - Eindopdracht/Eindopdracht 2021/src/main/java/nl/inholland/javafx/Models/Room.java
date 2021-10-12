@@ -14,8 +14,8 @@ public class Room {
 
     public Room(String roomName, Database db){
         this.db = db;
-        showingList = db.getShowings();
         this.roomName = roomName;
+        showingList = db.getShowingsPerRoom(roomName);
     }
 
     public List<Showing> getShowingList() {

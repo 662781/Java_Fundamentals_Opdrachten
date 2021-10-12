@@ -10,15 +10,16 @@ public class Database {
 
     private List<Movie> movies;
     private List<Person> users;
-    private List<Showing> showings;
+    private List<Showing> showingsRoom1;
+    private List<Showing> showingsRoom2;
     private List<Room> rooms;
 
     public Database(){
         movies = createMovies();
         users = createUsers();
         rooms = createRooms();
-        showings = createShowings();
-
+        showingsRoom1 = createShowingsRoom1();
+        showingsRoom2 = createShowingsRoom2();
     }
 
     //Getters
@@ -26,8 +27,12 @@ public class Database {
         return movies;
     }
 
-    public List<Showing> getShowings() {
-        return showings;
+    public List<Showing> getShowingsRoom1() {
+        return showingsRoom1;
+    }
+
+    public List<Showing> getShowingsRoom2() {
+        return showingsRoom2;
     }
 
     public List<Person> getUsers() {
@@ -52,6 +57,7 @@ public class Database {
     private List<Person> createUsers(){
         List<Person> users = new ArrayList<>();
         users.add(new User("PietJanKlaas", "123huts"));
+        users.add(new User("Klaas", "tester"));
 
         return users;
     }
@@ -65,18 +71,40 @@ public class Database {
         return rooms;
     }
 
-    private List<Showing> createShowings(){
+    private List<Showing> createShowingsRoom1(){
         List<Showing> showings = new ArrayList<>();
 
         Room room1 = rooms.get(0);
-        Room room2 = rooms.get(1);
 
         showings.add(new Showing(room1, movies.get(0), LocalDateTime.of(2021, 9, 10, 20, 0)));
         showings.add(new Showing(room1, movies.get(1), LocalDateTime.of(2021, 9, 10, 22, 30)));
+
+        return showings;
+    }
+
+    private List<Showing> createShowingsRoom2(){
+        List<Showing> showings = new ArrayList<>();
+
+        Room room2 = rooms.get(1);
 
         showings.add(new Showing(room2, movies.get(1), LocalDateTime.of(2021, 9, 10, 22, 0)));
         showings.add(new Showing(room2, movies.get(0), LocalDateTime.of(2021, 9, 10, 20, 0)));
 
         return showings;
+    }
+
+
+    //Checks the name of the room and sets the right showings list
+    public List<Showing> getShowingsPerRoom(String name){
+
+        if (name.equals("Room 1")){
+            return showingsRoom1;
+        }
+        else if (name.equals("Room 2")){
+            return showingsRoom2;
+        }
+
+        return showingsRoom1;
+
     }
 }

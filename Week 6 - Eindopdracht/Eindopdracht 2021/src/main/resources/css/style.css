@@ -5,19 +5,20 @@
 #TitleLabel{
     -fx-font-size: 30;
     -fx-font-weight: bold;
-    -fx-background-color: black;
-    -fx-text-fill: lightgrey;
+    -fx-background-color: #2d245e;
+    -fx-text-fill: #ffffff;
     -fx-alignment: center;
 }
 
-.blueDetail{
-    -fx-background-color: #256a9b;
+.detailLine{
+    -fx-background-color: #a20512;
 }
 
 #LoginButton{
     -fx-text-fill: white;
-    -fx-background-color: #256a9b;
+    -fx-background-color: #0d659f;
     -fx-font-size: 20;
+    -fx-font-weight: bold;
 }
 
 .text-field{

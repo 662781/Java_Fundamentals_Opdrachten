@@ -2,6 +2,7 @@ package nl.inholland.javafx.UI;
 
 import javafx.scene.Node;
 import javafx.stage.Stage;
+import nl.inholland.javafx.Database.Database;
 
 public abstract class Window{
     //Field

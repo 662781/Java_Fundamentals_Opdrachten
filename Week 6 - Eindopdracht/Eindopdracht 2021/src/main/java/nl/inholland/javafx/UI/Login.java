@@ -4,11 +4,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -29,21 +26,21 @@ public class Login extends Window{
         //Set window size and title
         window.setHeight(600);
         window.setWidth(800);
-        window.setTitle("University Project - Login");
+        window.setTitle("Fabulous Cinema | Login");
 
         //Create layout from method setLayout()
         VBox layout = setLayout();
 
         //Create scene and add stylesheet
         Scene scene = new Scene(layout);
-        scene.getStylesheets().add("css/LoginStyle.css");
+        scene.getStylesheets().add("css/style.css");
 
         //Set the scene and show window
         window.setScene(scene);
         window.show();
 
 
-        //Retrieve all the nodes you need from the layout
+        //Retrieve all the nodes needed from the layout
         HBox usernameBox = (HBox) layout.getChildren().get(1);
         HBox passwordBox = (HBox) layout.getChildren().get(2);
         HBox loginButtonBox = (HBox) layout.getChildren().get(3);
@@ -74,7 +71,7 @@ public class Login extends Window{
                         alert.showAndWait();
 
                         //Create new MainWindow
-                        main = new PurchaseTickets(window);
+                        main = new PurchaseTickets(window, db, p);
 
                         //Close this window
                         window.close();
@@ -119,7 +116,7 @@ public class Login extends Window{
         //Create empty label
         Label lbl_BlueDetail = new Label();
         lbl_BlueDetail.setPrefSize(800, 20);
-        lbl_BlueDetail.getStyleClass().add("blueDetail");
+        lbl_BlueDetail.getStyleClass().add("detailLine");
 
         //Create TextFields
         TextField txt_UsernameInput = new TextField();
