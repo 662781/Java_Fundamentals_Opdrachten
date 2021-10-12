@@ -93,7 +93,6 @@ public class Database {
         return showings;
     }
 
-
     //Checks the name of the room and sets the right showings list
     public List<Showing> getShowingsPerRoom(String name){
 
