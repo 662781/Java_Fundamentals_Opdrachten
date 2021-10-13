@@ -58,6 +58,8 @@ public class Database {
         List<Person> users = new ArrayList<>();
         users.add(new User("PietJanKlaas", "123huts"));
         users.add(new User("Klaas", "tester"));
+        users.add(new User("Mark", "DnD3"));
+        users.add(new User("Bas", "vcpw"));
 
         return users;
     }
