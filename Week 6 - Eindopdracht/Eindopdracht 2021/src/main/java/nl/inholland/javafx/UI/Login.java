@@ -10,7 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nl.inholland.javafx.Database.Database;
-import nl.inholland.javafx.Models.Person;
+import nl.inholland.javafx.Models.User;
 
 import java.util.List;
 import java.util.Objects;
@@ -50,7 +50,7 @@ public class Login extends Window{
         Button loginButton = (Button) loginButtonBox.getChildren().get(0);
 
         //Load the list from the DB class
-        List<Person> users = db.getUsers();
+        List<User> users = db.getUsers();
 
         //Executes code if login button is clicked
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -65,13 +65,13 @@ public class Login extends Window{
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Login");
                         //Gets the info of the person logging in
-                        Person p = getPersonInfo(usernameInputText.getText(), users);
+                        User u = getPersonInfo(usernameInputText.getText(), users);
                         //Sets the header text to welcome that person
-                        alert.setHeaderText("Welcome, " + p.getUsername());
+                        alert.setHeaderText("Welcome, " + u.getUsername());
                         alert.showAndWait();
 
                         //Create new MainWindow
-                        main = new PurchaseTickets(window, db, p);
+                        main = new PurchaseTickets(window, db, u);
 
                         //Close this window
                         window.close();
@@ -150,13 +150,13 @@ public class Login extends Window{
         return layout;
     }
 
-    private boolean passwordCheck(String username, String password, List<Person> people)
+    private boolean passwordCheck(String username, String password, List<User> people)
     {
         boolean checkPassed = false;
 
-        for (Person p: people)
+        for (User u: people)
         {
-            if (Objects.equals(username, p.getUsername()) && Objects.equals(password, p.getPassword()))
+            if (Objects.equals(username, u.getUsername()) && Objects.equals(password, u.getPassword()))
             {
                 checkPassed = true;
                 break;
@@ -170,20 +170,20 @@ public class Login extends Window{
         return checkPassed;
     }
 
-    Person getPersonInfo(String username, List<Person> users)
+    User getPersonInfo(String username, List<User> users)
     {
-        Person person = null;
+        User user = null;
 
-        for (Person p: users)
+        for (User u: users)
         {
-            if (Objects.equals(username, p.getUsername()))
+            if (Objects.equals(username, u.getUsername()))
             {
-                person = p;
+                user = u;
             }
         }
 
 
-        return person;
+        return user;
     }
 
 }

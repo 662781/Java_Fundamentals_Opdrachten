@@ -1,5 +1,6 @@
 package nl.inholland.javafx.UI;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
@@ -12,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nl.inholland.javafx.Database.Database;
 import nl.inholland.javafx.Models.*;
+import nl.inholland.javafx.Models.Enums.UserType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,7 @@ public class PurchaseTickets extends Window{
     private ObservableList<Showing> showingsRoom2;
     private List<Integer> amountOfSeatsChoices;
 
-    public PurchaseTickets(Stage loginWindow, Database db, Person personLoggedIn){
+    public PurchaseTickets(Stage loginWindow, Database db, User userLoggedIn){
         //Initializing data
 
         showingsRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
@@ -41,7 +43,7 @@ public class PurchaseTickets extends Window{
         //Set window size and title
         window.setHeight(600);
         window.setWidth(800);
-        window.setTitle("Fabulous Cinema | Purchase Tickets");
+        window.setTitle("Fabulous Cinema | Purchase Tickets | " + userLoggedIn.getUsername());
 
         //Create layout from method setLayout()
         VBox layout = setLayout();
@@ -53,6 +55,16 @@ public class PurchaseTickets extends Window{
         //Set the scene and show window
         window.setScene(scene);
         window.show();
+
+        //Get all the nodes needed to hide from the layout for the user
+        MenuBar menuBar = (MenuBar) layout.getChildren().get(0);
+
+        if (userLoggedIn.getUserType() == UserType.USER){
+            //Hide the Admin menu for the user
+            menuBar.getMenus().get(0).hide();
+        }
+
+
     }
 
     @Override
@@ -96,43 +108,51 @@ public class PurchaseTickets extends Window{
         //Create secondary Node (HBox) for the 2 TableViews
         HBox hBoxTickets = new HBox();
 
-        //Create TableView for Room1 and setting it up
-        TableView<Showing> tv_ShowingsRoom1 = setUpTableView();
+        //Create 2 HBoxes for the 2 TableViews
+        HBox showingTableRoom1 = new HBox();
+        HBox showingTableRoom2 = new HBox();
 
-        //Create Columns
-        TableColumn col_StartTimeR1 = createColumn("Start", "startTime", 100);
-        TableColumn col_EndTimeR1 = createColumn("End", "endTime", 100);
-        TableColumn col_TitleR1 = createColumn("Title", db.getRooms().get(0).getShowingList().get(0).getMovie().getTitle(), 100);
-        TableColumn col_SeatsR1 = createColumn("Seats", Integer.toString(db.getRooms().get(0).getShowingList().get(0).getMovie().getAmtOfSeats()), 100);
-        TableColumn col_PriceR1 = createColumn("Price", Double.toString(db.getRooms().get(0).getShowingList().get(0).getMovie().getTicketPrice()), 100);
+        //Create TableView for Room1, setting it up and adding to HBox
+        TableView<Showing> tv_Showings = setUpTableView();
 
-        tv_ShowingsRoom1.getColumns().addAll(col_StartTimeR1, col_EndTimeR1, col_TitleR1, col_SeatsR1, col_PriceR1);
+        //Create Columns from within the Showings object
+        TableColumn col_StartTime = createColumn("Start", "startTime", 100);
+        TableColumn col_EndTime = createColumn("End", "endTime", 100);
 
-        tv_ShowingsRoom1.setItems(showingsRoom1);
+        //Create Columns from outside the Showings object
+        TableColumn<Showing, String> col_Title = new TableColumn<>("Title");
+        col_Title.setMinWidth(150);
+        col_Title.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getMovie().getTitle()));
 
-        //Create TableView for Room2 and setting it up
-        TableView<Showing> tv_ShowingsRoom2 = setUpTableView();
+        TableColumn<Showing, String> col_Seats = new TableColumn<>("Seats");
+        col_Seats.setMinWidth(50);
+        col_Seats.setCellValueFactory(c -> new SimpleStringProperty(Integer.toString(c.getValue().getRoom().getAmtOfSeats())));
 
-        //Create Columns
-        TableColumn col_StartTimeR2 = createColumn("Start", "startTime", 100);
-        TableColumn col_EndTimeR2 = createColumn("End", "endTime", 100);
-        TableColumn col_TitleR2 = createColumn("Title", db.getRooms().get(1).getShowingList().get(0).getMovie().getTitle(), 100);
-        TableColumn col_SeatsR2 = createColumn("Seats", Integer.toString(db.getRooms().get(1).getShowingList().get(0).getMovie().getAmtOfSeats()), 100);
-        TableColumn col_PriceR2 = createColumn("Price", Double.toString(db.getRooms().get(1).getShowingList().get(0).getMovie().getTicketPrice()), 100);
+        TableColumn<Showing, String> col_Price = new TableColumn<>("Price");
+        col_Price.setMinWidth(50);
+        col_Price.setCellValueFactory(c -> new SimpleStringProperty(Double.toString(c.getValue().getMovie().getTicketPrice())));
 
-        tv_ShowingsRoom2.getColumns().addAll(col_StartTimeR2, col_EndTimeR2, col_TitleR2, col_SeatsR2, col_PriceR2);
+        tv_Showings.getColumns().addAll(col_StartTime, col_EndTime, col_Title, col_Seats, col_Price);
 
-        tv_ShowingsRoom2.setItems(showingsRoom2);
+        tv_Showings.setItems(showingsRoom1);
 
-        //Add the 2 TableViews to the HBox
-        hBoxTickets.getChildren().addAll(tv_ShowingsRoom1, tv_ShowingsRoom2);
+        showingTableRoom1.getChildren().add(tv_Showings);
+
+        //Create TableView for Room2, setting it up and adding to HBox
+
+        tv_Showings.setItems(showingsRoom2);
+
+        showingTableRoom2.getChildren().add(tv_Showings);
+
+        //Add the 2 sub HBoxes (TableViews) to the Ticket HBox
+        hBoxTickets.getChildren().addAll(showingTableRoom1, showingTableRoom2);
 
 
         //Create secondary Node (GridPane) for form
         GridPane formGridPane = new GridPane();
 
         //Create Nodes
-        
+
         //Create all Labels
         Label lbl_Room = new Label("Room");
         Label lbl_RoomNumber = new Label();
@@ -144,7 +164,7 @@ public class PurchaseTickets extends Window{
         Label lbl_ShowTitle = new Label();
         Label lbl_NrOfSeats = new Label("No. of seats");
         Label lbl_Name = new Label("Name");
-        
+
         //Create ComboBox
         ComboBox<Integer> cmb_NrOfSeats = new ComboBox<>();
         amountOfSeatsChoices.add(50);
@@ -153,11 +173,11 @@ public class PurchaseTickets extends Window{
         amountOfSeatsChoices.add(400);
         ObservableList<Integer> seats = FXCollections.observableArrayList(amountOfSeatsChoices);
         cmb_NrOfSeats.setItems(seats);
-        
+
         //Create TextField
         TextField txt_customerName = new TextField();
         txt_customerName.setPromptText("Please insert your full name");
-        
+
         //Create Buttons
         Button btn_Purchase = new Button("Purchase");
         Button btn_Clear = new Button("Clear");

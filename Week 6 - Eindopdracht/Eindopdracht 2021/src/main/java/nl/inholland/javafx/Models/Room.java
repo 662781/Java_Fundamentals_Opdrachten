@@ -10,14 +10,17 @@ public class Room {
 
     private Database db;
     private List<Showing> showingList;
+    private int amtOfSeats;
     private String roomName;
 
-    public Room(String roomName, Database db){
+    public Room(String roomName, Database db, int amtOfSeats){
         this.db = db;
         this.roomName = roomName;
+        this.amtOfSeats = amtOfSeats;
         showingList = db.getShowingsPerRoom(roomName);
     }
 
+    //Getters
     public List<Showing> getShowingList() {
         return showingList;
     }
@@ -26,6 +29,17 @@ public class Room {
         return roomName;
     }
 
+    public int getAmtOfSeats() {
+        return amtOfSeats;
+    }
+
+    //Setters
+    public void setAmtOfSeats(int amtOfSeats) {
+        this.amtOfSeats = amtOfSeats;
+    }
+
+
+    //Add showing method
     public void addShowing(Showing showing){
         showingList.add(showing);
     }

@@ -1,6 +1,7 @@
 package nl.inholland.javafx.Database;
 
 import nl.inholland.javafx.Models.*;
+import nl.inholland.javafx.Models.Enums.UserType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.List;
 public class Database {
 
     private List<Movie> movies;
-    private List<Person> users;
+    private List<User> users;
     private List<Showing> showingsRoom1;
     private List<Showing> showingsRoom2;
     private List<Room> rooms;
@@ -35,7 +36,7 @@ public class Database {
         return showingsRoom2;
     }
 
-    public List<Person> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 
@@ -47,19 +48,19 @@ public class Database {
     private List<Movie> createMovies(){
 
         List<Movie> movies = new ArrayList<>();
-        movies.add(new Movie("Venom: Let There Be Carnage", 200, 12.20, 2));
-        movies.add(new Movie("Spider-Man: No Way Home", 400, 16.00, 3));
+        movies.add(new Movie("Venom: Let There Be Carnage",  12.20, 2));
+        movies.add(new Movie("Spider-Man: No Way Home",16.00, 3));
 
         return movies;
 
     }
 
-    private List<Person> createUsers(){
-        List<Person> users = new ArrayList<>();
-        users.add(new User("PietJanKlaas", "123huts"));
-        users.add(new User("Klaas", "tester"));
-        users.add(new User("Mark", "DnD3"));
-        users.add(new User("Bas", "vcpw"));
+    private List<User> createUsers(){
+        List<User> users = new ArrayList<>();
+        users.add(new User("PietJanKlaas", "123huts", UserType.USER));
+        users.add(new User("Klaas", "tester", UserType.ADMIN));
+        users.add(new User("Mark", "DnD3", UserType.USER));
+        users.add(new User("Bas", "vcpw", UserType.ADMIN));
 
         return users;
     }
@@ -67,8 +68,8 @@ public class Database {
     private List<Room> createRooms(){
         List<Room> rooms = new ArrayList<>();
 
-        rooms.add(new Room("Room 1", this));
-        rooms.add(new Room("Room 2", this));
+        rooms.add(new Room("Room 1", this, 400));
+        rooms.add(new Room("Room 2", this, 200));
 
         return rooms;
     }

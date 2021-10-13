@@ -4,6 +4,12 @@
 
 ###Login Info
 
-Username: Mark Password: DnD3
+__User:__ 
+
+Username: _Mark_  | Password: _DnD3_
+
+__Admin:__ 
+
+Username: _Bas_ | Password: _vcpw_
 
 
