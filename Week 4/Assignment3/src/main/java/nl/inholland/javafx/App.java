@@ -83,7 +83,7 @@ public class App extends Application {
         Player computer = new Player(Symbols.O);
         Random rnd = new Random();
 
-        while(!player.winStatus && !computer.winStatus){
+        //while(!player.winStatus && !computer.winStatus){
 
             //The players turn
             for(Button btn: playingField){
@@ -92,31 +92,22 @@ public class App extends Application {
                         @Override
                         public void handle(ActionEvent actionEvent) {
                             btn.setText(player.symbol.toString());
+                            //Checks if there's 3 of the same symbols in a row
+                            checkWinStatus(playingField, player, computer);
+
+                            //Computers turn. Create random index to let the computer click the button on that index
+                            int rndButton = rnd.nextInt(9);
+                            playingField[rndButton].setText(computer.symbol.toString());
+                            //Checks if there's 3 of the same symbols in a row
+                            checkWinStatus(playingField, player, computer);
                         }
+
                     });
                 }
 
             }
 
-            //Checks if there's 3 of the same symbols in a row
-            checkWinStatus(playingField, player, computer);
-
-            //Computers turn. Create random index to let the computer click the button on that index
-            int rndButton = rnd.nextInt(9);
-
-            if (Objects.equals(playingField[rndButton].getText(), "_")) {
-                playingField[rndButton].setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent actionEvent) {
-                        playingField[rndButton].setText(computer.symbol.toString());
-                    }
-                });
-            }
-
-            //Checks if there's 3 of the same symbols in a row
-            checkWinStatus(playingField, player, computer);
-
-        }
+        //}
 
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
