@@ -109,23 +109,25 @@ public class Login extends Window{
 
         //Create label with logo and title
         Label lbl_LogoTitle = new Label("Fabulous Cinema");
-        lbl_LogoTitle.setId("TitleLabel");
+        lbl_LogoTitle.setId("TitleLabelLogin");
         lbl_LogoTitle.setPrefSize(800, 120);
         lbl_LogoTitle.setPadding(new Insets(10,10,10,10));
 
         //Create empty label
         Label lbl_BlueDetail = new Label();
         lbl_BlueDetail.setPrefSize(800, 20);
-        lbl_BlueDetail.getStyleClass().add("detailLine");
+        lbl_BlueDetail.setId("detailLine");
 
         //Create TextFields
         TextField txt_UsernameInput = new TextField();
         txt_UsernameInput.setPromptText("Username");
         txt_UsernameInput.setPrefSize(400, 20);
+        txt_UsernameInput.getStyleClass().add("textFieldLogin");
 
         PasswordField txt_PasswordInput = new PasswordField();
         txt_PasswordInput.setPromptText("Password");
         txt_PasswordInput.setPrefSize(400, 20);
+        txt_PasswordInput.getStyleClass().add("textFieldLogin");
 
         //Create button
         Button btn_Login = new Button("Login");

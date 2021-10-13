@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -22,6 +23,7 @@ import java.util.List;
 public class PurchaseTickets extends Window{
 
     private Stage loginWindow;
+    private User userLoggedIn;
     private Database db;
     private ObservableList<Showing> showingsRoom1;
     private ObservableList<Showing> showingsRoom2;
@@ -33,10 +35,12 @@ public class PurchaseTickets extends Window{
         showingsRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
         showingsRoom2 = FXCollections.observableArrayList(db.getShowingsRoom2());
         amountOfSeatsChoices = new ArrayList<>();
+        this.db = db;
+        this.userLoggedIn = userLoggedIn;
 
         //Initialize a Stage with the value of the LoginWindow for logging out
         this.loginWindow = loginWindow;
-        this.db = db;
+
 
         window = new Stage();
 
@@ -70,7 +74,7 @@ public class PurchaseTickets extends Window{
     @Override
     protected VBox setLayout(){
 
-        //Create Vertical Main Layout
+        //Create and setup Vertical Main Layout
         VBox layout = new VBox();
 
         //Create top MenuBar
@@ -100,28 +104,38 @@ public class PurchaseTickets extends Window{
 
         //Create main VBox for this part
         VBox mainVBoxTickets = new VBox();
+        mainVBoxTickets.setPadding(new Insets(10));
 
         //Create Label with title and add to VBox
         Label lbl_titleTickets = new Label("Purchase Tickets");
+        lbl_titleTickets.setId("ticketsTitle");
         mainVBoxTickets.getChildren().addAll(lbl_titleTickets);
 
         //Create secondary Node (HBox) for the 2 TableViews
         HBox hBoxTickets = new HBox();
 
+        hBoxTickets.setPadding(new Insets(10));
+
         //Create 2 HBoxes for the 2 TableViews
-        HBox showingTableRoom1 = new HBox();
-        HBox showingTableRoom2 = new HBox();
+        VBox showingTableRoom1 = new VBox();
+        VBox showingTableRoom2 = new VBox();
+
+        //Creat Labels
+        Label lbl_tableRoom1Title = new Label("Room 1");
+        lbl_tableRoom1Title.setId("tableShowingsTitle");
+        Label lbl_tableRoom2Title = new Label("Room 2");
+        lbl_tableRoom2Title.setId("tableShowingsTitle");
 
         //Create TableView for Room1, setting it up and adding to HBox
         TableView<Showing> tv_Showings = setUpTableView();
 
         //Create Columns from within the Showings object
-        TableColumn col_StartTime = createColumn("Start", "startTime", 100);
-        TableColumn col_EndTime = createColumn("End", "endTime", 100);
+        TableColumn col_StartTime = createColumn("Start", "startTime", 150);
+        TableColumn col_EndTime = createColumn("End", "endTime", 150);
 
         //Create Columns from outside the Showings object
         TableColumn<Showing, String> col_Title = new TableColumn<>("Title");
-        col_Title.setMinWidth(150);
+        col_Title.setMinWidth(200);
         col_Title.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getMovie().getTitle()));
 
         TableColumn<Showing, String> col_Seats = new TableColumn<>("Seats");
@@ -136,20 +150,27 @@ public class PurchaseTickets extends Window{
 
         tv_Showings.setItems(showingsRoom1);
 
-        showingTableRoom1.getChildren().add(tv_Showings);
+        showingTableRoom1.getChildren().addAll(lbl_tableRoom1Title, tv_Showings);
 
         //Create TableView for Room2, setting it up and adding to HBox
 
         tv_Showings.setItems(showingsRoom2);
 
-        showingTableRoom2.getChildren().add(tv_Showings);
+        showingTableRoom2.getChildren().addAll(lbl_tableRoom2Title, tv_Showings);
 
         //Add the 2 sub HBoxes (TableViews) to the Ticket HBox
         hBoxTickets.getChildren().addAll(showingTableRoom1, showingTableRoom2);
+        hBoxTickets.setPadding(new Insets(10, 10, 10, 10));
+
+        mainVBoxTickets.getChildren().addAll(hBoxTickets);
 
 
         //Create secondary Node (GridPane) for form
         GridPane formGridPane = new GridPane();
+
+        formGridPane.setPadding(new Insets(10));
+        formGridPane.setHgap(5);
+        formGridPane.setVgap(10);
 
         //Create Nodes
 
@@ -176,7 +197,8 @@ public class PurchaseTickets extends Window{
 
         //Create TextField
         TextField txt_customerName = new TextField();
-        txt_customerName.setPromptText("Please insert your full name");
+        txt_customerName.setPromptText("Username");
+        txt_customerName.setText(userLoggedIn.getUsername());
 
         //Create Buttons
         Button btn_Purchase = new Button("Purchase");

@@ -2,7 +2,7 @@
     -fx-background-color: white;
 }
 
-#TitleLabel{
+#TitleLabelLogin{
     -fx-font-size: 30;
     -fx-font-weight: bold;
     -fx-background-color: #2d245e;
@@ -10,7 +10,7 @@
     -fx-alignment: center;
 }
 
-.detailLine{
+#detailLine{
     -fx-background-color: #a20512;
 }
 
@@ -21,7 +21,30 @@
     -fx-font-weight: bold;
 }
 
-.text-field{
+.text-field.textFieldLogin{
     -fx-font-size: 20;
 
+}
+
+.menu-bar, .menu-item{
+    -fx-background-color: #2d245e;
+}
+
+.menu .label, .menu-item .label{
+    -fx-text-fill: white;
+}
+
+#ticketsTitle{
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-text-fill: #a20512;
+}
+
+.table-view{
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
+#tableShowingsTitle{
+    -fx-text-fill: #a20512;
 }
