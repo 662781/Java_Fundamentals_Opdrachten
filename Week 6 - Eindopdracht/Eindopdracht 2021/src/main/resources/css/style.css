@@ -48,3 +48,34 @@
 #tableShowingsTitle{
     -fx-text-fill: #a20512;
 }
+
+#HBoxTickets{
+    -fx-border-color: #2d245e;
+    -fx-border-width: medium;
+}
+
+
+
+.menu-item:hover, .menu:hover{
+    -fx-background-color: #5381ef;
+}
+
+#FormGrid{
+    -fx-background-color: #2d245e;
+}
+
+#FormGrid .label{
+    -fx-text-fill: white;
+}
+
+#FormGrid .button{
+    -fx-text-fill: white;
+    -fx-background-color: #0d659f;
+    -fx-font-weight: bold;
+}
+
+#FormGrid .button:hover{
+    -fx-text-fill: white;
+    -fx-background-color: #a20512;
+    -fx-font-weight: bold;
+}

@@ -1,9 +1,13 @@
 package nl.inholland.javafx.UI;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -22,7 +26,6 @@ import java.util.List;
 
 public class PurchaseTickets extends Window{
 
-    private Stage loginWindow;
     private User userLoggedIn;
     private Database db;
     private ObservableList<Showing> showingsRoom1;
@@ -31,22 +34,16 @@ public class PurchaseTickets extends Window{
 
     public PurchaseTickets(Stage loginWindow, Database db, User userLoggedIn){
         //Initializing data
-
         showingsRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
         showingsRoom2 = FXCollections.observableArrayList(db.getShowingsRoom2());
         amountOfSeatsChoices = new ArrayList<>();
         this.db = db;
         this.userLoggedIn = userLoggedIn;
-
-        //Initialize a Stage with the value of the LoginWindow for logging out
-        this.loginWindow = loginWindow;
-
-
         window = new Stage();
 
         //Set window size and title
         window.setHeight(600);
-        window.setWidth(800);
+        window.setWidth(1300);
         window.setTitle("Fabulous Cinema | Purchase Tickets | " + userLoggedIn.getUsername());
 
         //Create layout from method setLayout()
@@ -65,9 +62,87 @@ public class PurchaseTickets extends Window{
 
         if (userLoggedIn.getUserType() == UserType.USER){
             //Hide the Admin menu for the user
-            menuBar.getMenus().get(0).hide();
+            Menu adminMenu = menuBar.getMenus().get(0);
+            adminMenu.setVisible(false);
         }
 
+        //Get the buttons from the FormGrid
+        GridPane formGrid = (GridPane) layout.getChildren().get(2);
+        Button btn_Purchase = (Button) formGrid.getChildren().get(8);
+        Button btn_Clear = (Button) formGrid.getChildren().get(13);
+
+        //Get the labels and text field from the FormGrid
+        Label lbl_RoomNr = (Label) formGrid.getChildren().get(1);
+        Label lbl_Title = (Label) formGrid.getChildren().get(3);
+        Label lbl_StartTime = (Label) formGrid.getChildren().get(5);
+        Label lbl_EndTime = (Label) formGrid.getChildren().get(10);
+        TextField txt_CustomerName = (TextField) formGrid.getChildren().get(12);
+
+        //Create events for the buttons
+        btn_Purchase.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+                //Show alert to confirm purchase
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Purchase complete");
+                alert.setHeaderText("Enjoy the movie!");
+                alert.setHeight(50);
+                alert.setWidth(50);
+                alert.showAndWait();
+            }
+        });
+
+        btn_Clear.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                lbl_RoomNr.setText("");
+                lbl_Title.setText("");
+                lbl_StartTime.setText("");
+                lbl_EndTime.setText("");
+                txt_CustomerName.clear();
+            }
+        });
+
+        //Get the TableViews from the layout
+        VBox mainVBoxTickets = (VBox) layout.getChildren().get(1);
+        HBox hBoxTickets = (HBox) mainVBoxTickets.getChildren().get(1);
+        VBox showingsRoom1 = (VBox) hBoxTickets.getChildren().get(0);
+        VBox showingsRoom2 = (VBox) hBoxTickets.getChildren().get(1);
+
+        TableView<Showing> tv_ShowingsRoom1 = (TableView<Showing>) showingsRoom1.getChildren().get(1);
+        TableView<Showing> tv_ShowingsRoom2 = (TableView<Showing>) showingsRoom2.getChildren().get(1);
+
+        //Create listeners on the selected items from the TableViews
+        tv_ShowingsRoom1.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Showing>() {
+            @Override
+            public void changed(ObservableValue<? extends Showing> observableValue, Showing oldShowing, Showing newShowing) {
+                    lbl_RoomNr.setText(newShowing.getRoom().getRoomName());
+                    lbl_Title.setText(newShowing.getMovie().getTitle());
+                    lbl_StartTime.setText(newShowing.getStartTime().toString());
+                    lbl_EndTime.setText(newShowing.getEndTime().toString());
+            }
+        });
+
+        tv_ShowingsRoom2.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Showing>() {
+            @Override
+            public void changed(ObservableValue<? extends Showing> observableValue, Showing oldShowing, Showing newShowing) {
+                lbl_RoomNr.setText(newShowing.getRoom().getRoomName());
+                lbl_Title.setText(newShowing.getMovie().getTitle());
+                lbl_StartTime.setText(newShowing.getStartTime().toString());
+                lbl_EndTime.setText(newShowing.getEndTime().toString());
+            }
+        });
+
+        //Create event on logout menu-item
+        menuBar.getMenus().get(2).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                //Initialize a Stage with the value of the LoginWindow for logging out
+                loginWindow.show();
+                window.close();
+            }
+        });
 
     }
 
@@ -115,6 +190,7 @@ public class PurchaseTickets extends Window{
         HBox hBoxTickets = new HBox();
 
         hBoxTickets.setPadding(new Insets(10));
+        hBoxTickets.setSpacing(10);
 
         //Create 2 HBoxes for the 2 TableViews
         VBox showingTableRoom1 = new VBox();
@@ -126,41 +202,26 @@ public class PurchaseTickets extends Window{
         Label lbl_tableRoom2Title = new Label("Room 2");
         lbl_tableRoom2Title.setId("tableShowingsTitle");
 
-        //Create TableView for Room1, setting it up and adding to HBox
+
+        //Create TableView for Room1, setting it up and adding to the HBox
         TableView<Showing> tv_Showings = setUpTableView();
-
-        //Create Columns from within the Showings object
-        TableColumn col_StartTime = createColumn("Start", "startTime", 150);
-        TableColumn col_EndTime = createColumn("End", "endTime", 150);
-
-        //Create Columns from outside the Showings object
-        TableColumn<Showing, String> col_Title = new TableColumn<>("Title");
-        col_Title.setMinWidth(200);
-        col_Title.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getMovie().getTitle()));
-
-        TableColumn<Showing, String> col_Seats = new TableColumn<>("Seats");
-        col_Seats.setMinWidth(50);
-        col_Seats.setCellValueFactory(c -> new SimpleStringProperty(Integer.toString(c.getValue().getRoom().getAmtOfSeats())));
-
-        TableColumn<Showing, String> col_Price = new TableColumn<>("Price");
-        col_Price.setMinWidth(50);
-        col_Price.setCellValueFactory(c -> new SimpleStringProperty(Double.toString(c.getValue().getMovie().getTicketPrice())));
-
-        tv_Showings.getColumns().addAll(col_StartTime, col_EndTime, col_Title, col_Seats, col_Price);
 
         tv_Showings.setItems(showingsRoom1);
 
         showingTableRoom1.getChildren().addAll(lbl_tableRoom1Title, tv_Showings);
 
-        //Create TableView for Room2, setting it up and adding to HBox
+        //Create TableView for Room2, setting it up and adding to the HBox
 
-        tv_Showings.setItems(showingsRoom2);
+        TableView<Showing> tv_ShowingsRoom2 = setUpTableView();
 
-        showingTableRoom2.getChildren().addAll(lbl_tableRoom2Title, tv_Showings);
+        tv_ShowingsRoom2.setItems(showingsRoom2);
+
+        showingTableRoom2.getChildren().addAll(lbl_tableRoom2Title, tv_ShowingsRoom2);
 
         //Add the 2 sub HBoxes (TableViews) to the Ticket HBox
         hBoxTickets.getChildren().addAll(showingTableRoom1, showingTableRoom2);
         hBoxTickets.setPadding(new Insets(10, 10, 10, 10));
+        hBoxTickets.setId("HBoxTickets");
 
         mainVBoxTickets.getChildren().addAll(hBoxTickets);
 
@@ -169,8 +230,9 @@ public class PurchaseTickets extends Window{
         GridPane formGridPane = new GridPane();
 
         formGridPane.setPadding(new Insets(10));
-        formGridPane.setHgap(5);
+        formGridPane.setHgap(30);
         formGridPane.setVgap(10);
+        formGridPane.setId("FormGrid");
 
         //Create Nodes
 
@@ -188,12 +250,14 @@ public class PurchaseTickets extends Window{
 
         //Create ComboBox
         ComboBox<Integer> cmb_NrOfSeats = new ComboBox<>();
-        amountOfSeatsChoices.add(50);
-        amountOfSeatsChoices.add(100);
-        amountOfSeatsChoices.add(200);
-        amountOfSeatsChoices.add(400);
+        amountOfSeatsChoices.add(1);
+        amountOfSeatsChoices.add(2);
+        amountOfSeatsChoices.add(3);
+        amountOfSeatsChoices.add(4);
+        amountOfSeatsChoices.add(5);
         ObservableList<Integer> seats = FXCollections.observableArrayList(amountOfSeatsChoices);
         cmb_NrOfSeats.setItems(seats);
+        cmb_NrOfSeats.getSelectionModel().selectFirst();
 
         //Create TextField
         TextField txt_customerName = new TextField();
@@ -208,13 +272,14 @@ public class PurchaseTickets extends Window{
         formGridPane.addRow(1, lbl_Start, lbl_StartTime, lbl_NrOfSeats, cmb_NrOfSeats, btn_Purchase);
         formGridPane.addRow(2, lbl_End, lbl_EndTime, lbl_Name, txt_customerName, btn_Clear);
 
-        //Creat Node (HBox) for stripe at the bottom
-        HBox stripe = new HBox();
-        stripe.getStyleClass().add("detailLine");
+        //Creat Node (Label) for stripe at the bottom
+        Label lbl_Stripe = new Label();
+        lbl_Stripe.setPrefSize(window.getWidth(), 20);
+        lbl_Stripe.setId("detailLine");
 
 
         //Add all nodes to the main layout
-        layout.getChildren().addAll(menuBar, mainVBoxTickets, formGridPane, stripe);
+        layout.getChildren().addAll(menuBar, mainVBoxTickets, formGridPane, lbl_Stripe);
 
         return layout;
     }
@@ -233,6 +298,25 @@ public class PurchaseTickets extends Window{
         tableView.setEditable(true);
         tableView.getSelectionModel().setCellSelectionEnabled(false);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+        //Create Columns from within the Showings object
+        TableColumn col_StartTime = createColumn("Start", "startTime", 150);
+        TableColumn col_EndTime = createColumn("End", "endTime", 150);
+
+        //Create Columns from outside the Showings object
+        TableColumn<Showing, String> col_Title = new TableColumn<>("Title");
+        col_Title.setMinWidth(200);
+        col_Title.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getMovie().getTitle()));
+
+        TableColumn<Showing, String> col_Seats = new TableColumn<>("Seats");
+        col_Seats.setMinWidth(50);
+        col_Seats.setCellValueFactory(c -> new SimpleStringProperty(Integer.toString(c.getValue().getRoom().getAmtOfSeats())));
+
+        TableColumn<Showing, String> col_Price = new TableColumn<>("Price");
+        col_Price.setMinWidth(50);
+        col_Price.setCellValueFactory(c -> new SimpleStringProperty(String.format("%.2f", c.getValue().getMovie().getTicketPrice())));
+
+        tableView.getColumns().addAll(col_StartTime, col_EndTime, col_Title, col_Seats, col_Price);
 
         return tableView;
     }

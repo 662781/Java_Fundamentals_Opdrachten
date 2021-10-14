@@ -7,13 +7,13 @@ public class Showing{
     private Room room;
     private Movie movie;
     private LocalDateTime startTime;
-    private int endTime;
+    private LocalDateTime endTime;
 
     public Showing(Room room, Movie movie, LocalDateTime startTime) {
         this.room = room;
         this.movie = movie;
         this.startTime = startTime;
-        //endTime = this.startTime + LocalTime.of(movie.getDuration(), 0);
+        this.endTime = LocalDateTime.of(startTime.getYear(), startTime.getMonth(), startTime.getDayOfMonth(), (startTime.getHour() + movie.getDuration()), startTime.getMinute());
     }
 
 
@@ -29,7 +29,7 @@ public class Showing{
         return startTime;
     }
 
-    public int getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 }

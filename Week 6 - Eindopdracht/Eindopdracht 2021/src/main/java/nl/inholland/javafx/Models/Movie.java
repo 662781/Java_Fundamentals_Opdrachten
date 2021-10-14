@@ -1,5 +1,6 @@
 package nl.inholland.javafx.Models;
 
+import java.text.DecimalFormat;
 import java.time.LocalTime;
 
 public class Movie {

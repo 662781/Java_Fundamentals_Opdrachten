@@ -70,11 +70,13 @@ public class Login extends Window{
                         alert.setHeaderText("Welcome, " + u.getUsername());
                         alert.showAndWait();
 
+                        //Close this window and clear text fields
+                        usernameInputText.clear();
+                        passwordInputText.clear();
+                        window.close();
+
                         //Create new MainWindow
                         main = new PurchaseTickets(window, db, u);
-
-                        //Close this window
-                        window.close();
                     }
                     else{
                         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -114,9 +116,9 @@ public class Login extends Window{
         lbl_LogoTitle.setPadding(new Insets(10,10,10,10));
 
         //Create empty label
-        Label lbl_BlueDetail = new Label();
-        lbl_BlueDetail.setPrefSize(800, 20);
-        lbl_BlueDetail.setId("detailLine");
+        Label lbl_Stripe = new Label();
+        lbl_Stripe.setPrefSize(800, 20);
+        lbl_Stripe.setId("detailLine");
 
         //Create TextFields
         TextField txt_UsernameInput = new TextField();
@@ -144,7 +146,7 @@ public class Login extends Window{
         hbox_Login.setAlignment(Pos.CENTER);
 
         //Add nodes to vertical sub layouts
-        vbox_Title.getChildren().addAll(lbl_LogoTitle, lbl_BlueDetail);
+        vbox_Title.getChildren().addAll(lbl_LogoTitle, lbl_Stripe);
 
         //Add nodes to main layout
         layout.getChildren().addAll(vbox_Title, hbox_UsernameInput, hbox_PasswordInput, hbox_Login);
