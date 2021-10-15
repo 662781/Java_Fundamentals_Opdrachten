@@ -40,8 +40,8 @@
     -fx-text-fill: #a20512;
 }
 
-.table-view{
-    -fx-background-color: black;
+.table-view .label{
+    -fx-background-color: #2d245e;
     -fx-text-fill: white;
 }
 

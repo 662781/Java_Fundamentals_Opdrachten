@@ -65,7 +65,7 @@ public class Login extends Window{
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Login");
                         //Gets the info of the person logging in
-                        User u = getPersonInfo(usernameInputText.getText(), users);
+                        User u = getUserInfo(usernameInputText.getText(), users);
                         //Sets the header text to welcome that person
                         alert.setHeaderText("Welcome, " + u.getUsername());
                         alert.showAndWait();
@@ -112,12 +112,12 @@ public class Login extends Window{
         //Create label with logo and title
         Label lbl_LogoTitle = new Label("Fabulous Cinema");
         lbl_LogoTitle.setId("TitleLabelLogin");
-        lbl_LogoTitle.setPrefSize(800, 120);
+        lbl_LogoTitle.setPrefSize(window.getWidth(), 120);
         lbl_LogoTitle.setPadding(new Insets(10,10,10,10));
 
         //Create empty label
         Label lbl_Stripe = new Label();
-        lbl_Stripe.setPrefSize(800, 20);
+        lbl_Stripe.setPrefSize(window.getWidth(), 20);
         lbl_Stripe.setId("detailLine");
 
         //Create TextFields
@@ -174,7 +174,7 @@ public class Login extends Window{
         return checkPassed;
     }
 
-    User getPersonInfo(String username, List<User> users)
+    User getUserInfo(String username, List<User> users)
     {
         User user = null;
 

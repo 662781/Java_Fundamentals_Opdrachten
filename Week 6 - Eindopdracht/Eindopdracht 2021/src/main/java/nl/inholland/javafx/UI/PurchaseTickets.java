@@ -93,17 +93,6 @@ public class PurchaseTickets extends Window{
             }
         });
 
-        btn_Clear.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                lbl_RoomNr.setText("");
-                lbl_Title.setText("");
-                lbl_StartTime.setText("");
-                lbl_EndTime.setText("");
-                txt_CustomerName.clear();
-            }
-        });
-
         //Get the TableViews from the layout
         VBox mainVBoxTickets = (VBox) layout.getChildren().get(1);
         HBox hBoxTickets = (HBox) mainVBoxTickets.getChildren().get(1);
@@ -134,6 +123,18 @@ public class PurchaseTickets extends Window{
             }
         });
 
+        //Clears all the labels and text fields in the form when the button is clicked
+        btn_Clear.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                lbl_RoomNr.setText("");
+                lbl_Title.setText("");
+                lbl_StartTime.setText("");
+                lbl_EndTime.setText("");
+                txt_CustomerName.clear();
+            }
+        });
+
         //Create event on logout menu-item
         menuBar.getMenus().get(2).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -141,6 +142,28 @@ public class PurchaseTickets extends Window{
                 //Initialize a Stage with the value of the LoginWindow for logging out
                 loginWindow.show();
                 window.close();
+            }
+        });
+
+        //Shows the "Manage Showings" menu when the right menu item is clicked
+        menuBar.getMenus().get(0).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Showings menu! But not yet...").show();
+            }
+        });
+        //Shows the "Manage Movies" menu when the right menu item is clicked
+        menuBar.getMenus().get(0).getItems().get(1).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Movies menu! Fun!").show();
+            }
+        });
+        //Shows the about-message when the right menu item is clicked
+        menuBar.getMenus().get(1).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                new Alert(Alert.AlertType.INFORMATION, "I made this application. Don't try screwing with it, it will screw back. Promise. \nDoes this count as profanity by the way? I hope not.").show();
             }
         });
 

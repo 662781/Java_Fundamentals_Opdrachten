@@ -13,7 +13,7 @@ public class Showing{
         this.room = room;
         this.movie = movie;
         this.startTime = startTime;
-        this.endTime = LocalDateTime.of(startTime.getYear(), startTime.getMonth(), startTime.getDayOfMonth(), (startTime.getHour() + movie.getDuration()), startTime.getMinute());
+        this.endTime = startTime;//LocalDateTime.of(startTime.getYear(), startTime.getMonth(), startTime.getDayOfMonth(), (startTime.getHour() + movie.getDuration()), startTime.getMinute());
     }
 
 
