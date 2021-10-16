@@ -135,20 +135,12 @@ public class PurchaseTickets extends Window{
             }
         });
 
-        //Create event on logout menu-item
-        menuBar.getMenus().get(2).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                //Initialize a Stage with the value of the LoginWindow for logging out
-                loginWindow.show();
-                window.close();
-            }
-        });
-
         //Shows the "Manage Showings" menu when the right menu item is clicked
         menuBar.getMenus().get(0).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+
+                ManageShowings manageShowings = new ManageShowings(scene, layout, db, loginWindow);
                 new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Showings menu! But not yet...").show();
             }
         });
@@ -164,6 +156,16 @@ public class PurchaseTickets extends Window{
             @Override
             public void handle(ActionEvent actionEvent) {
                 new Alert(Alert.AlertType.INFORMATION, "I made this application. Don't try screwing with it, it will screw back. Promise. \nDoes this count as profanity by the way? I hope not.").show();
+            }
+        });
+
+        //Create event on logout menu-item
+        menuBar.getMenus().get(2).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                //Initialize a Stage with the value of the LoginWindow for logging out
+                loginWindow.show();
+                window.close();
             }
         });
 
@@ -188,11 +190,15 @@ public class PurchaseTickets extends Window{
         MenuItem logoutItem = new MenuItem("Logout...");
         MenuItem showingsItem = new MenuItem("Manage Showings");
         MenuItem moviesItem = new MenuItem("Manage Movies");
+        MenuItem ticketsItem = new MenuItem("Purchase Tickets");
 
         //Add the MenuItems to the Menus
-        adminMenu.getItems().addAll(showingsItem, moviesItem);
+        adminMenu.getItems().addAll(showingsItem, moviesItem, ticketsItem);
         helpMenu.getItems().addAll(aboutItem);
         logoutMenu.getItems().addAll(logoutItem);
+
+        //Hide the MenuItem from the current page
+        adminMenu.getItems().get(2).setVisible(false);
 
         //Add all the Menus to the MenuBar
         menuBar.getMenus().addAll(adminMenu, helpMenu, logoutMenu);
