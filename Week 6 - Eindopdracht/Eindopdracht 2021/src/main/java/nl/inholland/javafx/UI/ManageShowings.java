@@ -4,21 +4,21 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import nl.inholland.javafx.Database.Database;
-import nl.inholland.javafx.Models.Movie;
-import nl.inholland.javafx.Models.Room;
+import nl.inholland.javafx.Models.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ManageShowings extends Window {
 
-    private Scene purchaseTickets;
+    private Scene purchaseTicketsScene;
     private Stage loginWindow;
     private VBox layout;
     private List<Movie> movies;
@@ -26,21 +26,32 @@ public class ManageShowings extends Window {
     private List<Room> rooms;
     private List<String> roomNames;
 
-    public ManageShowings(Scene purchaseTickets, VBox layout, Database db, Stage loginWindow){
+    public ManageShowings(Scene purchaseTickets, VBox layout, Database db, Stage login, Stage purchaseTicketsWindow, User userLoggedIn){
 
         //Initialize data
-        this.loginWindow = loginWindow;
-        this.purchaseTickets = purchaseTickets;
+        loginWindow = login;
+        this.purchaseTicketsScene = purchaseTickets;
         this.layout = layout;
         movies = db.getMovies();
         rooms = db.getRooms();
         movieTitles = new ArrayList<>();
         roomNames = new ArrayList<>();
+        window = purchaseTicketsWindow;
 
+        //Set window title
+        window.setTitle("Fabulous Cinema | Manage Showings | " + userLoggedIn.getUsername());
 
-        Scene scene = new Scene(setLayout());
+        //Create new layout from setLayout()
+        VBox manageShowings = setLayout();
+
+        //Create new scene and add stylesheet
+        Scene scene = new Scene(manageShowings);
+        scene.getStylesheets().add("css/style.css");
+
+        //Set the scene
         window.setScene(scene);
 
+        //Get the MenuBar from the layout
         MenuBar menuBar = (MenuBar) layout.getChildren().get(0);
 
         //Shows the "Manage Movies" menu when the right menu item is clicked
@@ -55,7 +66,7 @@ public class ManageShowings extends Window {
         menuBar.getMenus().get(0).getItems().get(2).setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                window.setScene(purchaseTickets);
+                window.setScene(purchaseTicketsScene);
             }
         });
 
@@ -71,7 +82,7 @@ public class ManageShowings extends Window {
         menuBar.getMenus().get(2).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                //Initialize a Stage with the value of the LoginWindow for logging out
+                //Show the LoginWindow for logging out and close this window
                 loginWindow.show();
                 window.close();
             }
@@ -82,6 +93,8 @@ public class ManageShowings extends Window {
 
     protected VBox setLayout(){
 
+        //Get the MenuBar from the old layout and set the visibility of the MenuItem from the current page to false
+        //And show the purchase tickets MenuItem to enable the user to go back
         MenuBar menuBar = (MenuBar) layout.getChildren().get(0);
         Menu adminMenu = menuBar.getMenus().get(0);
         MenuItem showingsItem = adminMenu.getItems().get(0);
@@ -89,15 +102,23 @@ public class ManageShowings extends Window {
         showingsItem.setVisible(false);
         ticketsItem.setVisible(true);
 
+        //Get the title Label from the old layout and change the title
         VBox mainVBoxShowings = (VBox) layout.getChildren().get(1);
         Label lbl_ShowingsMenuTitle = (Label) mainVBoxShowings.getChildren().get(0);
         lbl_ShowingsMenuTitle.setText("Manage showings");
 
-
+        //Removing the old Form GridPane from the layout
         GridPane formGrid = (GridPane) layout.getChildren().get(2);
-        formGrid.setVisible(false);
+        layout.getChildren().remove(formGrid);
 
-        //Create nodes for Form
+        //Create new Form GridPane
+        GridPane formGridAddShowing = new GridPane();
+        formGridAddShowing.setPadding(new Insets(10));
+        formGridAddShowing.setHgap(30);
+        formGridAddShowing.setVgap(10);
+        formGridAddShowing.setId("FormGrid");
+
+        //Create nodes for new Form
         Label lbl_Title = new Label("Movie title");
         Label lbl_Room = new Label("Room");
         Label lbl_Seats = new Label("No. of seats");
@@ -132,14 +153,14 @@ public class ManageShowings extends Window {
         TextField txt_StartTime = new TextField();
         txt_StartTime.setPromptText("00:00");
 
-        GridPane formGridAddShowing = new GridPane();
+
+        //Add nodes to new From GridPane
         formGridAddShowing.addRow(0, lbl_Title, cmb_MovieTitle, lbl_Start, startDatePicker, txt_StartTime);
         formGridAddShowing.addRow(1, lbl_Room, cmb_Room, lbl_End, lbl_EndTime, btn_AddShowing);
         formGridAddShowing.addRow(2, lbl_Seats, lbl_SeatsNr, lbl_Price, lbl_PriceShow, btn_Clear);
 
-        formGridAddShowing.setHgap(30);
-        formGridAddShowing.setVgap(10);
 
+        //Add the new Form GridPane to the layout
         layout.getChildren().add(2, formGridAddShowing);
         return layout;
     }

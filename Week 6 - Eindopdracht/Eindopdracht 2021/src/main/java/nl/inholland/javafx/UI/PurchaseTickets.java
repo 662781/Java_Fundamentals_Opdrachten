@@ -140,8 +140,8 @@ public class PurchaseTickets extends Window{
             @Override
             public void handle(ActionEvent actionEvent) {
 
-                ManageShowings manageShowings = new ManageShowings(scene, layout, db, loginWindow);
-                new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Showings menu! But not yet...").show();
+                ManageShowings manageShowings = new ManageShowings(scene, layout, db, loginWindow, window, userLoggedIn);
+                //new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Showings menu! But not yet...").show();
             }
         });
         //Shows the "Manage Movies" menu when the right menu item is clicked
