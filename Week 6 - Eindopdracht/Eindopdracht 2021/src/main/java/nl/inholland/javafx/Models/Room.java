@@ -17,7 +17,7 @@ public class Room {
         this.db = db;
         this.roomName = roomName;
         this.amtOfSeats = amtOfSeats;
-        showingList = db.getShowingsPerRoom(roomName);
+        showingList = db.getShowingsPerRoom(this.roomName);
     }
 
     //Getters
@@ -37,7 +37,6 @@ public class Room {
     public void setAmtOfSeats(int amtOfSeats) {
         this.amtOfSeats = amtOfSeats;
     }
-
 
     //Add showing method
     public void addShowing(Showing showing){

@@ -5,7 +5,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -28,14 +27,13 @@ public class PurchaseTickets extends Window{
 
     private User userLoggedIn;
     private Database db;
-    private ObservableList<Showing> showingsRoom1;
-    private ObservableList<Showing> showingsRoom2;
+    private ObservableList<Showing> showingsListRoom1, showingsListRoom2;
     private List<Integer> amountOfSeatsChoices;
 
     public PurchaseTickets(Stage loginWindow, Database db, User userLoggedIn){
         //Initializing data
-        showingsRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
-        showingsRoom2 = FXCollections.observableArrayList(db.getShowingsRoom2());
+        showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
+        showingsListRoom2 = FXCollections.observableArrayList(db.getShowingsRoom2());
         amountOfSeatsChoices = new ArrayList<>();
         this.db = db;
         this.userLoggedIn = userLoggedIn;
@@ -66,32 +64,20 @@ public class PurchaseTickets extends Window{
             adminMenu.setVisible(false);
         }
 
-        //Get the buttons from the FormGrid
+        //Get the buttons from the Form GridPane
         GridPane formGrid = (GridPane) layout.getChildren().get(2);
         Button btn_Purchase = (Button) formGrid.getChildren().get(8);
         Button btn_Clear = (Button) formGrid.getChildren().get(13);
 
-        //Get the labels and text field from the FormGrid
+        //Get the labels and text field from the Form GridPane
         Label lbl_RoomNr = (Label) formGrid.getChildren().get(1);
         Label lbl_Title = (Label) formGrid.getChildren().get(3);
         Label lbl_StartTime = (Label) formGrid.getChildren().get(5);
         Label lbl_EndTime = (Label) formGrid.getChildren().get(10);
         TextField txt_CustomerName = (TextField) formGrid.getChildren().get(12);
 
-        //Create events for the buttons
-        btn_Purchase.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-
-                //Show alert to confirm purchase
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Purchase complete");
-                alert.setHeaderText("Enjoy the movie!");
-                alert.setHeight(50);
-                alert.setWidth(50);
-                alert.showAndWait();
-            }
-        });
+        //Get the ComboBox from the Form GridPane
+        ComboBox<Integer> cmb_AmtOfSeats = (ComboBox<Integer>) formGrid.getChildren().get(7);
 
         //Get the TableViews from the layout
         VBox mainVBoxTickets = (VBox) layout.getChildren().get(1);
@@ -110,6 +96,50 @@ public class PurchaseTickets extends Window{
                     lbl_Title.setText(newShowing.getMovie().getTitle());
                     lbl_StartTime.setText(newShowing.getStartTime().toString());
                     lbl_EndTime.setText(newShowing.getEndTime().toString());
+
+                //Shows a confirmation message that the purchase is complete after the button is clicked
+                btn_Purchase.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        if (tv_ShowingsRoom1.getSelectionModel().selectedItemProperty() != null){
+                            //Checks if the Text Field is not empty
+                            if (!txt_CustomerName.getText().equals(""))
+                            {
+                                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to buy a ticket?");
+                                alert.setTitle("Confirm purchase");
+                                alert.showAndWait();
+
+                                //Create new Ticket
+                                Ticket ticket = new Ticket(tv_ShowingsRoom1.getSelectionModel().getSelectedItem().getMovie().getTicketPrice(),tv_ShowingsRoom1.getSelectionModel().getSelectedItem().getMovie().getTitle(),cmb_AmtOfSeats.getValue(),txt_CustomerName.getText(),newShowing);
+
+                                //Show alert to confirm purchase
+                                Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie!");
+                                alertConfirm.setTitle("Purchase complete");
+                                alertConfirm.showAndWait();
+
+                                //Add the ticket to the ticket list of the user that is logged in
+                                userLoggedIn.addTicket(ticket);
+
+                                //Subtract the amount of purchased seats of the total amount of seats from the room
+//                                Room room = newShowing.getRoom();
+//                                room.setAmtOfSeats(room.getAmtOfSeats() - cmb_AmtOfSeats.getValue());
+//
+//                                showingsListRoom1 = FXCollections.observableArrayList(newShowing.getRoom().getShowingList());
+//                                tv_ShowingsRoom1.setItems(showingsListRoom1);
+                            }
+                            else{
+                                Alert alertEmptyField = new Alert(Alert.AlertType.INFORMATION, "Please enter your name before purchasing a ticket!");
+                                alertEmptyField.setTitle("Empty field");
+                                alertEmptyField.show();
+                            }
+                        }
+                        else{
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please select a showing before submitting!");
+                            alert.setTitle("No showing selected");
+                            alert.show();
+                        }
+                    }
+                });
             }
         });
 
@@ -120,8 +150,57 @@ public class PurchaseTickets extends Window{
                 lbl_Title.setText(newShowing.getMovie().getTitle());
                 lbl_StartTime.setText(newShowing.getStartTime().toString());
                 lbl_EndTime.setText(newShowing.getEndTime().toString());
+
+                //Shows a confirmation message that the purchase is complete after the button is clicked
+                btn_Purchase.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+
+                        if (tv_ShowingsRoom2.getSelectionModel().selectedItemProperty() != null){
+                            //Checks if the Text Field is not empty
+                            if (!txt_CustomerName.getText().equals(""))
+                            {
+
+                                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to buy a ticket?");
+                                alert.setTitle("Confirm purchase");
+                                alert.showAndWait();
+
+                                //Create new Ticket
+                                Ticket ticket = new Ticket(tv_ShowingsRoom2.getSelectionModel().getSelectedItem().getMovie().getTicketPrice(),tv_ShowingsRoom2.getSelectionModel().getSelectedItem().getMovie().getTitle(),cmb_AmtOfSeats.getValue(),txt_CustomerName.getText(),newShowing);
+
+                                //Show alert to confirm purchase
+                                Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie!");
+                                alertConfirm.setTitle("Purchase complete");
+                                alertConfirm.showAndWait();
+
+                                //Add the ticket to the ticket list of the user that is logged in
+                                userLoggedIn.addTicket(ticket);
+
+                                //Subtract the amount of purchased seats of the total amount of seats from the room
+//                                Room room = newShowing.getRoom();
+//                                room.setAmtOfSeats(room.getAmtOfSeats() - cmb_AmtOfSeats.getValue());
+//
+//                                showingsListRoom2 = FXCollections.observableArrayList(newShowing.getRoom().getShowingList());
+//                                tv_ShowingsRoom2.setItems(showingsListRoom2);
+                            }
+                            else{
+                                Alert alertEmptyField = new Alert(Alert.AlertType.INFORMATION, "Please enter your name before purchasing a ticket!");
+                                alertEmptyField.setTitle("Empty field");
+                                alertEmptyField.show();
+                            }
+                        }
+                        else{
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please select a showing before submitting!");
+                            alert.setTitle("No showing selected");
+                            alert.show();
+                        }
+
+
+                    }
+                });
             }
         });
+
 
         //Clears all the labels and text fields in the form when the button is clicked
         btn_Clear.setOnAction(new EventHandler<ActionEvent>() {
@@ -235,7 +314,7 @@ public class PurchaseTickets extends Window{
         //Create TableView for Room1, setting it up and adding to the HBox
         TableView<Showing> tv_Showings = setUpTableView();
 
-        tv_Showings.setItems(showingsRoom1);
+        tv_Showings.setItems(showingsListRoom1);
 
         showingTableRoom1.getChildren().addAll(lbl_tableRoom1Title, tv_Showings);
 
@@ -243,7 +322,7 @@ public class PurchaseTickets extends Window{
 
         TableView<Showing> tv_ShowingsRoom2 = setUpTableView();
 
-        tv_ShowingsRoom2.setItems(showingsRoom2);
+        tv_ShowingsRoom2.setItems(showingsListRoom2);
 
         showingTableRoom2.getChildren().addAll(lbl_tableRoom2Title, tv_ShowingsRoom2);
 

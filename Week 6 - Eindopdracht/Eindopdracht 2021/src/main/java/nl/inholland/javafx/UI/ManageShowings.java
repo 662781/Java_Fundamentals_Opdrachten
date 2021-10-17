@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -22,9 +21,9 @@ public class ManageShowings extends Window {
     private Stage loginWindow;
     private VBox layout;
     private List<Movie> movies;
-    private List<String> movieTitles;
     private List<Room> rooms;
-    private List<String> roomNames;
+    private List<String> movieTitles, roomNames;
+
 
     public ManageShowings(Scene purchaseTickets, VBox layout, Database db, Stage login, Stage purchaseTicketsWindow, User userLoggedIn){
 
@@ -93,9 +92,12 @@ public class ManageShowings extends Window {
 
     protected VBox setLayout(){
 
+        //Create new VBox
+        VBox manageShowings = layout;
+
         //Get the MenuBar from the old layout and set the visibility of the MenuItem from the current page to false
-        //And show the purchase tickets MenuItem to enable the user to go back
-        MenuBar menuBar = (MenuBar) layout.getChildren().get(0);
+        //And set the visibility of the purchase tickets MenuItem to show to enable the user to go back
+        MenuBar menuBar = (MenuBar) manageShowings.getChildren().get(0);
         Menu adminMenu = menuBar.getMenus().get(0);
         MenuItem showingsItem = adminMenu.getItems().get(0);
         MenuItem ticketsItem = adminMenu.getItems().get(2);
@@ -103,13 +105,13 @@ public class ManageShowings extends Window {
         ticketsItem.setVisible(true);
 
         //Get the title Label from the old layout and change the title
-        VBox mainVBoxShowings = (VBox) layout.getChildren().get(1);
+        VBox mainVBoxShowings = (VBox) manageShowings.getChildren().get(1);
         Label lbl_ShowingsMenuTitle = (Label) mainVBoxShowings.getChildren().get(0);
         lbl_ShowingsMenuTitle.setText("Manage showings");
 
         //Removing the old Form GridPane from the layout
-        GridPane formGrid = (GridPane) layout.getChildren().get(2);
-        layout.getChildren().remove(formGrid);
+        GridPane formGrid = (GridPane) manageShowings.getChildren().get(2);
+        manageShowings.getChildren().remove(formGrid);
 
         //Create new Form GridPane
         GridPane formGridAddShowing = new GridPane();
@@ -161,7 +163,8 @@ public class ManageShowings extends Window {
 
 
         //Add the new Form GridPane to the layout
-        layout.getChildren().add(2, formGridAddShowing);
-        return layout;
+        manageShowings.getChildren().add(2, formGridAddShowing);
+
+        return manageShowings;
     }
 }
