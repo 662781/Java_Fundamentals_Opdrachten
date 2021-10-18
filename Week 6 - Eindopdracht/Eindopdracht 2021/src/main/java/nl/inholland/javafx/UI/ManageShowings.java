@@ -43,6 +43,7 @@ public class ManageShowings extends Window {
         //Create new layout from setLayout()
         VBox manageShowings = setLayout();
 
+
         //Create new scene and add stylesheet
         Scene scene = new Scene(manageShowings);
         scene.getStylesheets().add("css/style.css");
