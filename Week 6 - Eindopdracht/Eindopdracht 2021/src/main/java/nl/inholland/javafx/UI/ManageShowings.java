@@ -12,25 +12,29 @@ import javafx.stage.Stage;
 import nl.inholland.javafx.Database.Database;
 import nl.inholland.javafx.Models.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ManageShowings extends Window {
 
-    private Scene purchaseTicketsScene;
+    private Scene mainScene;
     private Stage loginWindow;
-    private VBox layout;
+    private VBox mainLayout;
     private List<Movie> movies;
     private List<Room> rooms;
     private List<String> movieTitles, roomNames;
+    private ObservableList<Showing> showingsListRoom1, showingsListRoom2;
 
 
-    public ManageShowings(Scene purchaseTickets, VBox layout, Database db, Stage login, Stage purchaseTicketsWindow, User userLoggedIn){
+    public ManageShowings(Scene main, VBox layout, Database db, Stage login, Stage purchaseTicketsWindow, User userLoggedIn){
 
         //Initialize data
         loginWindow = login;
-        this.purchaseTicketsScene = purchaseTickets;
-        this.layout = layout;
+        this.mainScene = main;
+        mainLayout = layout;
         movies = db.getMovies();
         rooms = db.getRooms();
         movieTitles = new ArrayList<>();
@@ -43,13 +47,11 @@ public class ManageShowings extends Window {
         //Create new layout from setLayout()
         VBox manageShowings = setLayout();
 
-
-        //Create new scene and add stylesheet
-        Scene scene = new Scene(manageShowings);
-        scene.getStylesheets().add("css/style.css");
+        //Set the manipulated layout as the root of the scene
+        main.setRoot(manageShowings);
 
         //Set the scene
-        window.setScene(scene);
+        window.setScene(mainScene);
 
         //Get the MenuBar from the layout
         MenuBar menuBar = (MenuBar) layout.getChildren().get(0);
@@ -66,7 +68,7 @@ public class ManageShowings extends Window {
         menuBar.getMenus().get(0).getItems().get(2).setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                window.setScene(purchaseTicketsScene);
+                window.getScene().setRoot(mainLayout);
             }
         });
 
@@ -88,13 +90,102 @@ public class ManageShowings extends Window {
             }
         });
 
+        //Get the TableViews from the layout
+        VBox mainVBoxTickets = (VBox) manageShowings.getChildren().get(1);
+        HBox hBoxTickets = (HBox) mainVBoxTickets.getChildren().get(1);
+        VBox showingsRoom1 = (VBox) hBoxTickets.getChildren().get(0);
+        VBox showingsRoom2 = (VBox) hBoxTickets.getChildren().get(1);
+
+        TableView<Showing> tv_ShowingsRoom1 = (TableView<Showing>) showingsRoom1.getChildren().get(1);
+        TableView<Showing> tv_ShowingsRoom2 = (TableView<Showing>) showingsRoom2.getChildren().get(1);
+
+        //Get the form from the layout
+        GridPane formGrid = (GridPane) manageShowings.getChildren().get(2);
+
+        //Get all the nodes needed to add a showing
+        ComboBox<String> cmb_MovieTitle = (ComboBox<String>) formGrid.getChildren().get(1);
+        ComboBox<String> cmb_Room = (ComboBox<String>) formGrid.getChildren().get(6);
+
+        DatePicker startDate = (DatePicker) formGrid.getChildren().get(3);
+        TextField startTime = (TextField) formGrid.getChildren().get(4);
+
+        Button btn_AddShowing = (Button) formGrid.getChildren().get(9);
+        Button btn_Clear = (Button) formGrid.getChildren().get(14);
+
+        //Get all the labels from the form
+        Label lbl_EndTime = (Label) formGrid.getChildren().get(8);
+        Label lbl_Seats = (Label) formGrid.getChildren().get(10);
+        Label lbl_TicketPrice = (Label) formGrid.getChildren().get(12);
+
+        btn_AddShowing.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+                //Gets the date and time + adds them into a LocalDateTime object
+                LocalDate dateStart = startDate.getValue();
+                LocalTime timeStart = LocalTime.parse(startTime.getText());
+                LocalDateTime startDateTime = LocalDateTime.of(dateStart, timeStart);
+
+                //Gets the Movie object from the list using the movie title from the ComboBox
+                Movie selectedMovie = null;
+
+                for (Movie movie: movies){
+                    if (movie.getTitle().equals(cmb_MovieTitle.getValue())){
+                        selectedMovie = movie;
+                    }
+                }
+
+                //Gets the Room object from the list using the room name from the ComboBox
+                Room selectedRoom = null;
+
+                for (Room room: rooms){
+                    if (room.getRoomName().equals(cmb_Room.getValue())){
+                        selectedRoom = room;
+                    }
+                }
+
+                //Set the text of the labels
+                lbl_TicketPrice.setText(String.format("%.2f", selectedMovie.getTicketPrice()));
+                lbl_Seats.setText(Integer.toString(selectedRoom.getAmtOfSeats()));
+
+                String endTime = startDateTime.plusMinutes(selectedMovie.getDuration()).toString();
+                lbl_EndTime.setText(endTime);
+
+                //Insert new showing into list
+                db.getShowingsPerRoom(selectedRoom.getRoomName()).add(new Showing(selectedRoom, selectedMovie, startDateTime));
+                if (selectedRoom.getRoomName().equals("Room 1")){
+                    showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
+                    tv_ShowingsRoom1.setItems(showingsListRoom1);
+                }
+                else{
+                    showingsListRoom2 = FXCollections.observableArrayList(db.getShowingsRoom2());
+                    tv_ShowingsRoom2.setItems(showingsListRoom2);
+                }
+
+
+
+
+                if (!startTime.getText().equals("")){
+
+                }
+                else{
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please enter a time before submitting");
+                    alert.setTitle("Empty field");
+                    alert.show();
+                }
+            }
+        });
+
+
+
+
 
     }
 
     protected VBox setLayout(){
 
         //Create new VBox
-        VBox manageShowings = layout;
+        VBox manageShowings = mainLayout;
 
         //Get the MenuBar from the old layout and set the visibility of the MenuItem from the current page to false
         //And set the visibility of the purchase tickets MenuItem to show to enable the user to go back
@@ -142,6 +233,7 @@ public class ManageShowings extends Window {
         }
         ObservableList<String> movies = FXCollections.observableArrayList(movieTitles);
         cmb_MovieTitle.setItems(movies);
+        cmb_MovieTitle.getSelectionModel().selectFirst();
 
         //Create ComboBox with rooms
         ComboBox<String> cmb_Room = new ComboBox<>();
@@ -150,8 +242,9 @@ public class ManageShowings extends Window {
         }
         ObservableList<String> rooms = FXCollections.observableArrayList(roomNames);
         cmb_Room.setItems(rooms);
+        cmb_Room.getSelectionModel().selectFirst();
 
-        DatePicker startDatePicker = new DatePicker();
+        DatePicker startDatePicker = new DatePicker(LocalDate.now());
 
         TextField txt_StartTime = new TextField();
         txt_StartTime.setPromptText("00:00");

@@ -19,6 +19,11 @@ import nl.inholland.javafx.Database.Database;
 import nl.inholland.javafx.Models.*;
 import nl.inholland.javafx.Models.Enums.UserType;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +74,9 @@ public class PurchaseTickets extends Window{
         Button btn_Purchase = (Button) formGrid.getChildren().get(8);
         Button btn_Clear = (Button) formGrid.getChildren().get(13);
 
+        //Hide the form
+        formGrid.setVisible(false);
+
         //Get the labels and text field from the Form GridPane
         Label lbl_RoomNr = (Label) formGrid.getChildren().get(1);
         Label lbl_Title = (Label) formGrid.getChildren().get(3);
@@ -89,9 +97,13 @@ public class PurchaseTickets extends Window{
         TableView<Showing> tv_ShowingsRoom2 = (TableView<Showing>) showingsRoom2.getChildren().get(1);
 
         //Create listeners on the selected items from the TableViews
+
+        //Shows form to purchase tickets after an item in the TableView for Room 1 is clicked
         tv_ShowingsRoom1.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Showing>() {
             @Override
             public void changed(ObservableValue<? extends Showing> observableValue, Showing oldShowing, Showing newShowing) {
+                    //Show and fill the form
+                    formGrid.setVisible(true);
                     lbl_RoomNr.setText(newShowing.getRoom().getRoomName());
                     lbl_Title.setText(newShowing.getMovie().getTitle());
                     lbl_StartTime.setText(newShowing.getStartTime().toString());
@@ -143,9 +155,12 @@ public class PurchaseTickets extends Window{
             }
         });
 
+        //Shows form to purchase tickets after an item in the TableView for Room 2 is clicked
         tv_ShowingsRoom2.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Showing>() {
             @Override
             public void changed(ObservableValue<? extends Showing> observableValue, Showing oldShowing, Showing newShowing) {
+                //Show and fill the form
+                formGrid.setVisible(true);
                 lbl_RoomNr.setText(newShowing.getRoom().getRoomName());
                 lbl_Title.setText(newShowing.getMovie().getTitle());
                 lbl_StartTime.setText(newShowing.getStartTime().toString());
@@ -201,8 +216,7 @@ public class PurchaseTickets extends Window{
             }
         });
 
-
-        //Clears all the labels and text fields in the form when the button is clicked
+        //Clears all the labels and text fields in the form when the button is clicked and hides the form
         btn_Clear.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -211,6 +225,7 @@ public class PurchaseTickets extends Window{
                 lbl_StartTime.setText("");
                 lbl_EndTime.setText("");
                 txt_CustomerName.clear();
+                formGrid.setVisible(false);
             }
         });
 
@@ -223,6 +238,7 @@ public class PurchaseTickets extends Window{
                 //new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Showings menu! But not yet...").show();
             }
         });
+
         //Shows the "Manage Movies" menu when the right menu item is clicked
         menuBar.getMenus().get(0).getItems().get(1).setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -230,6 +246,7 @@ public class PurchaseTickets extends Window{
                 new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Movies menu! Fun!").show();
             }
         });
+
         //Shows the about-message when the right menu item is clicked
         menuBar.getMenus().get(1).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -392,13 +409,13 @@ public class PurchaseTickets extends Window{
         return layout;
     }
 
-    private TableColumn createColumn(String header, String value, int minWidth){
+    /*private TableColumn createColumn(String header, String value, int minWidth){
         TableColumn col = new TableColumn(header);
         col.setMinWidth(minWidth);
         col.setCellValueFactory(new PropertyValueFactory<Showing, String>(value));
 
         return col;
-    }
+    }*/
 
     private TableView setUpTableView(){
         TableView<Showing> tableView = new TableView<>();
@@ -407,11 +424,15 @@ public class PurchaseTickets extends Window{
         tableView.getSelectionModel().setCellSelectionEnabled(false);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
-        //Create Columns from within the Showings object
-        TableColumn col_StartTime = createColumn("Start", "startTime", 150);
-        TableColumn col_EndTime = createColumn("End", "endTime", 150);
+        //Create Columns
+        TableColumn<Showing, String> col_StartTime = new TableColumn<>("Start");
+        col_StartTime.setMinWidth(150);
+        col_StartTime.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getStartTime().toString()));
 
-        //Create Columns from outside the Showings object
+        TableColumn<Showing, String> col_EndTime = new TableColumn<>("End");
+        col_EndTime.setMinWidth(150);
+        col_EndTime.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getEndTime().toString()));
+
         TableColumn<Showing, String> col_Title = new TableColumn<>("Title");
         col_Title.setMinWidth(200);
         col_Title.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getMovie().getTitle()));

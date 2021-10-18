@@ -13,6 +13,7 @@ public class Movie {
         this.title = title;
         this.ticketPrice = ticketPrice;
         this.duration = duration;
+        //this.durationMin = durationMin;
     }
 
     //Getters
@@ -27,6 +28,10 @@ public class Movie {
     public int getDuration() {
         return duration;
     }
+
+//    public int getDurationMin() {
+//        return durationMin;
+//    }
 
 
 

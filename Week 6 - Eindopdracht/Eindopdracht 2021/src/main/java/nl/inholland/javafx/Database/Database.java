@@ -48,8 +48,8 @@ public class Database {
     private List<Movie> createMovies(){
 
         List<Movie> movies = new ArrayList<>();
-        movies.add(new Movie("Venom: Let There Be Carnage",  12.20, 2));
-        movies.add(new Movie("Spider-Man: No Way Home",16.00, 3));
+        movies.add(new Movie("Venom: Let There Be Carnage",  12.20, 120));
+        movies.add(new Movie("Spider-Man: No Way Home",16.00, 150));
 
         return movies;
 
