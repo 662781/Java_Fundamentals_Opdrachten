@@ -1,5 +1,7 @@
 package nl.inholland.javafx.UI;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,6 +25,7 @@ public class ManageShowings extends Window {
     private Scene mainScene;
     private Stage loginWindow;
     private VBox mainLayout;
+    private Database db;
     private List<Movie> movies;
     private List<Room> rooms;
     private List<String> movieTitles, roomNames;
@@ -35,6 +38,7 @@ public class ManageShowings extends Window {
         loginWindow = login;
         this.mainScene = main;
         mainLayout = layout;
+        this.db = db;
         movies = db.getMovies();
         rooms = db.getRooms();
         movieTitles = new ArrayList<>();
@@ -114,28 +118,54 @@ public class ManageShowings extends Window {
 
         //Get all the labels from the form
         Label lbl_EndTime = (Label) formGrid.getChildren().get(8);
-        Label lbl_Seats = (Label) formGrid.getChildren().get(10);
-        Label lbl_TicketPrice = (Label) formGrid.getChildren().get(12);
+        Label lbl_Seats = (Label) formGrid.getChildren().get(11);
+        Label lbl_TicketPrice = (Label) formGrid.getChildren().get(13);
 
-        btn_AddShowing.setOnAction(new EventHandler<ActionEvent>() {
+        //Create listeners on the ComboBoxes
+
+        //Sets the text on the labels when another movie is selected
+        cmb_MovieTitle.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void handle(ActionEvent actionEvent) {
-
-                //Gets the date and time + adds them into a LocalDateTime object
-                LocalDate dateStart = startDate.getValue();
-                LocalTime timeStart = LocalTime.parse(startTime.getText());
-                LocalDateTime startDateTime = LocalDateTime.of(dateStart, timeStart);
-
-                //Gets the Movie object from the list using the movie title from the ComboBox
+            public void changed(ObservableValue<? extends String> observableValue, String oldSelection, String newSelection) {
                 Movie selectedMovie = null;
 
                 for (Movie movie: movies){
-                    if (movie.getTitle().equals(cmb_MovieTitle.getValue())){
+                    if (movie.getTitle().equals(newSelection)){
                         selectedMovie = movie;
                     }
                 }
 
-                //Gets the Room object from the list using the room name from the ComboBox
+                //Gets the date and time + adds them into a LocalDateTime object
+                LocalDate dateStart = startDate.getValue();
+                if (!startTime.getText().equals("")){
+
+                    LocalTime timeStart = LocalTime.parse(startTime.getText());
+                    LocalDateTime startDateTime = LocalDateTime.of(dateStart, timeStart);
+
+                    //Sets the text of the labels
+                    String endTime = startDateTime.plusMinutes(selectedMovie.getDuration()).toString();
+                    lbl_EndTime.setText(endTime);
+                }
+                else{
+                    lbl_EndTime.setText("End unknown");
+                }
+
+                startTime.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observableValue, String oldContent, String newContent) {
+
+                    }
+                });
+
+
+                lbl_TicketPrice.setText(String.format("%.2f", selectedMovie.getTicketPrice()));
+            }
+        });
+
+        //Sets the text on the labels when another room is selected
+        cmb_Room.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldSelection, String newSelection) {
                 Room selectedRoom = null;
 
                 for (Room room: rooms){
@@ -143,30 +173,78 @@ public class ManageShowings extends Window {
                         selectedRoom = room;
                     }
                 }
-
-                //Set the text of the labels
-                lbl_TicketPrice.setText(String.format("%.2f", selectedMovie.getTicketPrice()));
                 lbl_Seats.setText(Integer.toString(selectedRoom.getAmtOfSeats()));
+            }
+        });
 
-                String endTime = startDateTime.plusMinutes(selectedMovie.getDuration()).toString();
-                lbl_EndTime.setText(endTime);
+        //Add a showing to the list when the button is clicked and all conditions are true
+        btn_AddShowing.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
 
-                //Insert new showing into list
-                db.getShowingsPerRoom(selectedRoom.getRoomName()).add(new Showing(selectedRoom, selectedMovie, startDateTime));
-                if (selectedRoom.getRoomName().equals("Room 1")){
-                    showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
-                    tv_ShowingsRoom1.setItems(showingsListRoom1);
-                }
-                else{
-                    showingsListRoom2 = FXCollections.observableArrayList(db.getShowingsRoom2());
-                    tv_ShowingsRoom2.setItems(showingsListRoom2);
-                }
-
-
-
-
+                //Checks if a start time is entered
                 if (!startTime.getText().equals("")){
 
+                    //Gets the date and time + adds them into a LocalDateTime object
+                    LocalDate dateStart = startDate.getValue();
+                    LocalTime timeStart = LocalTime.parse(startTime.getText());
+                    LocalDateTime startDateTime = LocalDateTime.of(dateStart, timeStart);
+
+                    //Gets the Movie object from the list using the movie title from the ComboBox
+                    Movie selectedMovie = null;
+
+                    for (Movie movie: movies){
+                        if (movie.getTitle().equals(cmb_MovieTitle.getValue())){
+                            selectedMovie = movie;
+                        }
+                    }
+
+                    //Gets the Room object from the list using the room name from the ComboBox
+                    Room selectedRoom = null;
+
+                    for (Room room: rooms){
+                        if (room.getRoomName().equals(cmb_Room.getValue())){
+                            selectedRoom = room;
+                        }
+                    }
+
+                    Showing newShowing = new Showing(selectedRoom, selectedMovie, startDateTime);
+
+                    //Checks if the new showing overlaps any other showing in the list
+                    boolean overlap = false;
+
+                    //Checks for the selected room
+                    for (Showing showing: db.getShowingsPerRoom(selectedRoom.getRoomName())){
+                        /*if (!(newShowing.getStartTime().compareTo(showing.getEndTime().plusMinutes(15)) >= 0) && !(newShowing.getEndTime().compareTo(showing.getStartTime().minusMinutes(15)) <= 0)){
+                            overlap = true;
+                        }*/
+                        if (newShowing.getStartTime().compareTo(showing.getStartTime()) == 0){
+                            overlap = true;
+                        }
+                        else{
+                            break;
+                        }
+
+                    }
+
+                    if (!overlap){
+                        //Insert new showing into list
+                        db.getShowingsPerRoom(selectedRoom.getRoomName()).add(newShowing);
+                        //Reload lists to show the new showing in the list
+                        if (selectedRoom.getRoomName().equals("Room 1")){
+                            showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
+                            tv_ShowingsRoom1.setItems(showingsListRoom1);
+                        }
+                        else{
+                            showingsListRoom2 = FXCollections.observableArrayList(db.getShowingsRoom2());
+                            tv_ShowingsRoom2.setItems(showingsListRoom2);
+                        }
+                    }
+                    else{
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please enter date and time that don't overlap with other showings in the same room");
+                        alert.setTitle("Overlap");
+                        alert.show();
+                    }
                 }
                 else{
                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please enter a time before submitting");
@@ -175,10 +253,6 @@ public class ManageShowings extends Window {
                 }
             }
         });
-
-
-
-
 
     }
 
@@ -235,7 +309,7 @@ public class ManageShowings extends Window {
         cmb_MovieTitle.setItems(movies);
         cmb_MovieTitle.getSelectionModel().selectFirst();
 
-        //Create ComboBox with rooms
+        //Create ComboBox with room names
         ComboBox<String> cmb_Room = new ComboBox<>();
         for (Room room: this.rooms){
             roomNames.add(room.getRoomName());

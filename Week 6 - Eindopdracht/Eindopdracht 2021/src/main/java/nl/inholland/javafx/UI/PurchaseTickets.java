@@ -409,14 +409,6 @@ public class PurchaseTickets extends Window{
         return layout;
     }
 
-    /*private TableColumn createColumn(String header, String value, int minWidth){
-        TableColumn col = new TableColumn(header);
-        col.setMinWidth(minWidth);
-        col.setCellValueFactory(new PropertyValueFactory<Showing, String>(value));
-
-        return col;
-    }*/
-
     private TableView setUpTableView(){
         TableView<Showing> tableView = new TableView<>();
 
