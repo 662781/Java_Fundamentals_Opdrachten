@@ -197,6 +197,9 @@ public class ManageShowings extends Window {
                         if (movie.getTitle().equals(cmb_MovieTitle.getValue())){
                             selectedMovie = movie;
                         }
+                        else{
+                            selectedMovie = db.getMovies().get(0);
+                        }
                     }
 
                     //Gets the Room object from the list using the room name from the ComboBox
@@ -205,6 +208,9 @@ public class ManageShowings extends Window {
                     for (Room room: rooms){
                         if (room.getRoomName().equals(cmb_Room.getValue())){
                             selectedRoom = room;
+                        }
+                        else{
+                            selectedRoom = db.getRooms().get(0);
                         }
                     }
 
@@ -215,10 +221,7 @@ public class ManageShowings extends Window {
 
                     //Checks for the selected room
                     for (Showing showing: db.getShowingsPerRoom(selectedRoom.getRoomName())){
-                        /*if (!(newShowing.getStartTime().compareTo(showing.getEndTime().plusMinutes(15)) >= 0) && !(newShowing.getEndTime().compareTo(showing.getStartTime().minusMinutes(15)) <= 0)){
-                            overlap = true;
-                        }*/
-                        if (newShowing.getStartTime().compareTo(showing.getStartTime()) == 0){
+                        if (!(newShowing.getStartTime().compareTo(showing.getEndTime().plusMinutes(15)) >= 0) && !(newShowing.getEndTime().compareTo(showing.getStartTime().minusMinutes(15)) <= 0)){
                             overlap = true;
                         }
                         else{
