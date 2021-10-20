@@ -37,8 +37,6 @@ public class PurchaseTickets extends Window{
 
     public PurchaseTickets(Stage loginWindow, Database db, User userLoggedIn){
         //Initializing data
-        showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
-        showingsListRoom2 = FXCollections.observableArrayList(db.getShowingsRoom2());
         amountOfSeatsChoices = new ArrayList<>();
         this.db = db;
         this.userLoggedIn = userLoggedIn;
@@ -109,7 +107,7 @@ public class PurchaseTickets extends Window{
                     lbl_StartTime.setText(newShowing.getStartTime().toString());
                     lbl_EndTime.setText(newShowing.getEndTime().toString());
 
-                //Shows a confirmation message that the purchase is complete after the button is clicked
+                //Shows a confirmation message that the purchase is complete after the button is clicked and the user did not click "cancel"
                 btn_Purchase.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
@@ -117,27 +115,34 @@ public class PurchaseTickets extends Window{
                             //Checks if the Text Field is not empty
                             if (!txt_CustomerName.getText().equals(""))
                             {
+                                //Shows an Alert to ask for confirmation
                                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to buy a ticket?");
                                 alert.setTitle("Confirm purchase");
-                                alert.showAndWait();
+                                alert.showAndWait().ifPresent(response -> {
+                                    if (response != ButtonType.CANCEL){
+                                        //Create new Ticket
+                                        Ticket ticket = new Ticket(tv_ShowingsRoom1.getSelectionModel().getSelectedItem().getMovie().getTicketPrice(),tv_ShowingsRoom1.getSelectionModel().getSelectedItem().getMovie().getTitle(),cmb_AmtOfSeats.getValue(),txt_CustomerName.getText(),newShowing);
 
-                                //Create new Ticket
-                                Ticket ticket = new Ticket(tv_ShowingsRoom1.getSelectionModel().getSelectedItem().getMovie().getTicketPrice(),tv_ShowingsRoom1.getSelectionModel().getSelectedItem().getMovie().getTitle(),cmb_AmtOfSeats.getValue(),txt_CustomerName.getText(),newShowing);
+                                        //Show alert to confirm purchase
+                                        Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie!");
+                                        alertConfirm.setTitle("Purchase complete");
+                                        alertConfirm.showAndWait();
 
-                                //Show alert to confirm purchase
-                                Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie!");
-                                alertConfirm.setTitle("Purchase complete");
-                                alertConfirm.showAndWait();
+                                        //Add the ticket to the ticket list of the user that is logged in
+                                        userLoggedIn.addTicket(ticket);
 
-                                //Add the ticket to the ticket list of the user that is logged in
-                                userLoggedIn.addTicket(ticket);
+                                        //Hide the form
+                                        formGrid.setVisible(false);
 
-                                //Subtract the amount of purchased seats of the total amount of seats from the room
-//                                Room room = newShowing.getRoom();
-//                                room.setAmtOfSeats(room.getAmtOfSeats() - cmb_AmtOfSeats.getValue());
-//
-//                                showingsListRoom1 = FXCollections.observableArrayList(newShowing.getRoom().getShowingList());
-//                                tv_ShowingsRoom1.setItems(showingsListRoom1);
+                                        //Subtract the amount of purchased seats of the total amount of available tickets
+                                        newShowing.setTicketsAvailable(newShowing.getTicketsAvailable() - cmb_AmtOfSeats.getValue());
+
+                                        //Reload the list to show the changes
+                                        showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
+                                        tv_ShowingsRoom1.setItems(showingsListRoom1);
+
+                                    }
+                                });
                             }
                             else{
                                 Alert alertEmptyField = new Alert(Alert.AlertType.INFORMATION, "Please enter your name before purchasing a ticket!");
@@ -178,25 +183,29 @@ public class PurchaseTickets extends Window{
 
                                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to buy a ticket?");
                                 alert.setTitle("Confirm purchase");
-                                alert.showAndWait();
+                                alert.showAndWait().ifPresent(response -> {
+                                    if (response != ButtonType.CANCEL){
+                                        //Create new Ticket
+                                        Ticket ticket = new Ticket(tv_ShowingsRoom2.getSelectionModel().getSelectedItem().getMovie().getTicketPrice(),tv_ShowingsRoom2.getSelectionModel().getSelectedItem().getMovie().getTitle(),cmb_AmtOfSeats.getValue(),txt_CustomerName.getText(),newShowing);
 
-                                //Create new Ticket
-                                Ticket ticket = new Ticket(tv_ShowingsRoom2.getSelectionModel().getSelectedItem().getMovie().getTicketPrice(),tv_ShowingsRoom2.getSelectionModel().getSelectedItem().getMovie().getTitle(),cmb_AmtOfSeats.getValue(),txt_CustomerName.getText(),newShowing);
+                                        //Show alert to confirm purchase
+                                        Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie!");
+                                        alertConfirm.setTitle("Purchase complete");
+                                        alertConfirm.showAndWait();
 
-                                //Show alert to confirm purchase
-                                Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie!");
-                                alertConfirm.setTitle("Purchase complete");
-                                alertConfirm.showAndWait();
+                                        //Add the ticket to the ticket list of the user that is logged in
+                                        userLoggedIn.addTicket(ticket);
 
-                                //Add the ticket to the ticket list of the user that is logged in
-                                userLoggedIn.addTicket(ticket);
+                                        formGrid.setVisible(false);
 
-                                //Subtract the amount of purchased seats of the total amount of seats from the room
+                                        //Subtract the amount of purchased seats of the total amount of seats from the room
 //                                Room room = newShowing.getRoom();
 //                                room.setAmtOfSeats(room.getAmtOfSeats() - cmb_AmtOfSeats.getValue());
 //
 //                                showingsListRoom2 = FXCollections.observableArrayList(newShowing.getRoom().getShowingList());
 //                                tv_ShowingsRoom2.setItems(showingsListRoom2);
+                                    }
+                                });
                             }
                             else{
                                 Alert alertEmptyField = new Alert(Alert.AlertType.INFORMATION, "Please enter your name before purchasing a ticket!");
@@ -234,7 +243,7 @@ public class PurchaseTickets extends Window{
             @Override
             public void handle(ActionEvent actionEvent) {
 
-                ManageShowings manageShowings = new ManageShowings(scene, layout, db, loginWindow, window, userLoggedIn);
+                new ManageShowings(scene, layout, db, loginWindow, window, userLoggedIn);
                 //new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Showings menu! But not yet...").show();
             }
         });
@@ -331,6 +340,7 @@ public class PurchaseTickets extends Window{
         //Create TableView for Room1, setting it up and adding to the HBox
         TableView<Showing> tv_Showings = setUpTableView();
 
+        showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
         tv_Showings.setItems(showingsListRoom1);
 
         showingTableRoom1.getChildren().addAll(lbl_tableRoom1Title, tv_Showings);
@@ -339,6 +349,7 @@ public class PurchaseTickets extends Window{
 
         TableView<Showing> tv_ShowingsRoom2 = setUpTableView();
 
+        showingsListRoom2 = FXCollections.observableArrayList(db.getShowingsRoom2());
         tv_ShowingsRoom2.setItems(showingsListRoom2);
 
         showingTableRoom2.getChildren().addAll(lbl_tableRoom2Title, tv_ShowingsRoom2);
@@ -432,6 +443,10 @@ public class PurchaseTickets extends Window{
         TableColumn<Showing, String> col_Seats = new TableColumn<>("Seats");
         col_Seats.setMinWidth(50);
         col_Seats.setCellValueFactory(c -> new SimpleStringProperty(Integer.toString(c.getValue().getRoom().getAmtOfSeats())));
+
+        TableColumn<Showing, String> col_TicketsAvailable = new TableColumn<>("Tickets left");
+        col_TicketsAvailable.setMinWidth(50);
+        col_TicketsAvailable.setCellValueFactory(c -> new SimpleStringProperty(Integer.toString(c.getValue().getTicketsAvailable())));
 
         TableColumn<Showing, String> col_Price = new TableColumn<>("Price");
         col_Price.setMinWidth(50);

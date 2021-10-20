@@ -51,11 +51,23 @@ public class ManageShowings extends Window {
         //Create new layout from setLayout()
         VBox manageShowings = setLayout();
 
+        //Remove all children from the root
+        mainLayout.getChildren().remove(0);
+        mainLayout.getChildren().remove(1);
+        mainLayout.getChildren().remove(2);
+        mainLayout.getChildren().remove(3);
+
         //Set the manipulated layout as the root of the scene
-        main.setRoot(manageShowings);
+//        main.setRoot(manageShowings);
+
+        //Add children of manipulated layout to the Scene root (mainLayout)
+        mainLayout.getChildren().set(0,manageShowings.getChildren().get(0));
+        mainLayout.getChildren().set(1,manageShowings.getChildren().get(1));
+        mainLayout.getChildren().set(2,manageShowings.getChildren().get(2));
+        mainLayout.getChildren().set(3,manageShowings.getChildren().get(3));
 
         //Set the scene
-        window.setScene(mainScene);
+//        window.setScene(mainScene);
 
         //Get the MenuBar from the layout
         MenuBar menuBar = (MenuBar) layout.getChildren().get(0);
@@ -72,7 +84,14 @@ public class ManageShowings extends Window {
         menuBar.getMenus().get(0).getItems().get(2).setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                window.getScene().setRoot(mainLayout);
+                mainLayout.getChildren().remove(0);
+                mainLayout.getChildren().remove(1);
+                mainLayout.getChildren().remove(2);
+                mainLayout.getChildren().remove(3);
+                mainLayout.getChildren().set(0,layout.getChildren().get(0));
+                mainLayout.getChildren().set(1,layout.getChildren().get(1));
+                mainLayout.getChildren().set(2,layout.getChildren().get(2));
+                mainLayout.getChildren().set(3,layout.getChildren().get(3));
             }
         });
 
