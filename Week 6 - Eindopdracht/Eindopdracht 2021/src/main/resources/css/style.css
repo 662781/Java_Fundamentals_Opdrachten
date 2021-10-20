@@ -45,7 +45,7 @@
     -fx-text-fill: white;
 }
 
-#tableShowingsTitle{
+#tableShowingsTitle, #tableMoviesTitle{
     -fx-text-fill: #a20512;
 }
 

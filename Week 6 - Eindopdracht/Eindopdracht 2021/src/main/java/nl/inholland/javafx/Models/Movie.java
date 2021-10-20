@@ -29,9 +29,6 @@ public class Movie {
         return duration;
     }
 
-//    public int getDurationMin() {
-//        return durationMin;
-//    }
 
 
 

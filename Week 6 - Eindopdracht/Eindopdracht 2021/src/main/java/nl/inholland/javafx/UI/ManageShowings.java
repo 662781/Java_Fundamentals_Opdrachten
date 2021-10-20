@@ -24,31 +24,31 @@ import java.util.List;
 
 public class ManageShowings extends Window {
 
-    private Stage loginWindow;
-    private VBox mainLayout;
-    private Database db;
-    private User userLoggedIn;
     private List<Movie> movies;
     private List<Room> rooms;
     private List<String> movieTitles, roomNames;
     private ObservableList<Showing> showingsListRoom1, showingsListRoom2;
+    private VBox showingsTableView;
 
 
-    public ManageShowings(VBox layout, Database db, Stage login, Stage purchaseTicketsWindow, User userLoggedIn){
+    public ManageShowings(VBox layout, Database db, Stage login, Stage mainWindow, User userLoggedIn, VBox showingsTableView){
 
         //Initialize data
         loginWindow = login;
         mainLayout = layout;
         this.db = db;
         this.userLoggedIn = userLoggedIn;
+        this.showingsTableView = showingsTableView;
+        window = mainWindow;
         movies = db.getMovies();
         rooms = db.getRooms();
         movieTitles = new ArrayList<>();
         roomNames = new ArrayList<>();
-        window = purchaseTicketsWindow;
+
+
 
         //Apply settings for the Manage Showings screen
-        setLayout();
+        setupManageShowingsScreen();
 
         //Get the MenuBar from the layout
         MenuBar menuBar = (MenuBar) layout.getChildren().get(0);
@@ -57,7 +57,8 @@ public class ManageShowings extends Window {
         menuBar.getMenus().get(0).getItems().get(1).setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Movies menu! Fun!").show();
+                new ManageMovies(layout, db, login, mainWindow, userLoggedIn, showingsTableView);
+//                new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Movies menu! Fun!").show();
             }
         });
 
@@ -65,11 +66,7 @@ public class ManageShowings extends Window {
         menuBar.getMenus().get(0).getItems().get(2).setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                TicketForm ticketForm = new TicketForm(userLoggedIn, new ArrayList<>());
-                mainLayout.getChildren().remove(2);
-                mainLayout.getChildren().add(2, ticketForm.getTicketForm());
-
-
+                new PurchaseTickets(loginWindow, db, userLoggedIn, layout, window);
             }
         });
 
@@ -256,15 +253,17 @@ public class ManageShowings extends Window {
 
     }
 
-    protected void setLayout(){
+    protected void setupManageShowingsScreen(){
 
-        //Get the MenuBar from the old layout and set the visibility of the MenuItem from the current page to false
-        //And set the visibility of the purchase tickets MenuItem to show to enable the user to go back
+        //Get the MenuBar from the layout and set the visibility of the MenuItem from the current page to false
+        //And set the visibility of the purchase tickets MenuItem to true to enable the user to switch menus
         MenuBar menuBar = (MenuBar) mainLayout.getChildren().get(0);
         Menu adminMenu = menuBar.getMenus().get(0);
         MenuItem showingsItem = adminMenu.getItems().get(0);
+        MenuItem moviesItem = adminMenu.getItems().get(1);
         MenuItem ticketsItem = adminMenu.getItems().get(2);
         showingsItem.setVisible(false);
+        moviesItem.setVisible(true);
         ticketsItem.setVisible(true);
 
         //Set window title
@@ -279,6 +278,11 @@ public class ManageShowings extends Window {
         mainLayout.getChildren().remove(2);
         ShowingForm showingForm = new ShowingForm(movieTitles, roomNames, movies, rooms);
         mainLayout.getChildren().add(2, showingForm.getShowingForm());
+
+        //Remove potential Movie TableView and add Showings TableView
+        VBox showingsMain = (VBox) showingsTableView.getChildren().get(1);
+        mainLayout.getChildren().remove(1);
+        mainLayout.getChildren().add(1, showingsMain);
 
     }
 }

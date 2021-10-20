@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import nl.inholland.javafx.Database.Database;
 import nl.inholland.javafx.Models.*;
 import nl.inholland.javafx.Models.Enums.UserType;
+import nl.inholland.javafx.UI.Forms.ShowingForm;
 import nl.inholland.javafx.UI.Forms.TicketForm;
 
 import java.text.SimpleDateFormat;
@@ -31,39 +32,77 @@ import java.util.List;
 
 public class PurchaseTickets extends Window{
 
-    private User userLoggedIn;
-    private Database db;
     private ObservableList<Showing> showingsListRoom1, showingsListRoom2;
     private List<Integer> amountOfSeatsChoices;
 
+    //Constructor for first initialization (new Stage)
     public PurchaseTickets(Stage loginWindow, Database db, User userLoggedIn){
         //Initializing data
         amountOfSeatsChoices = new ArrayList<>();
         this.db = db;
         this.userLoggedIn = userLoggedIn;
+        this.loginWindow = loginWindow;
         window = new Stage();
 
         //Set window size and title
         window.setHeight(600);
-        window.setWidth(1300);
+        window.setWidth(1450);
         window.setTitle("Fabulous Cinema | Purchase Tickets | " + userLoggedIn.getUsername());
 
         //Create layout from method setLayout()
-        VBox layout = setLayout();
+        VBox mainLayout = setLayout();
 
         //Create scene and add stylesheet
-        Scene scene = new Scene(layout);
+        Scene scene = new Scene(mainLayout);
         scene.getStylesheets().add("css/style.css");
 
         //Set the scene and show window
         window.setScene(scene);
         window.show();
 
-        handleAllActions(layout, loginWindow);
+        handleAllActions(mainLayout);
 
     }
 
-    public PurchaseTickets(){
+    //Constructor for switching between menus
+    public PurchaseTickets(Stage loginWindow, Database db, User userLoggedIn, VBox mainLayout, Stage mainWindow){
+        //Initializing data
+        amountOfSeatsChoices = new ArrayList<>();
+        this.db = db;
+        this.userLoggedIn = userLoggedIn;
+        this.loginWindow = loginWindow;
+        this.window = mainWindow;
+
+        //Get the MenuBar from the layout and set the visibility of the MenuItem from the current page to false
+        //And set the visibility of the purchase tickets MenuItem to show to enable the user to go back
+        MenuBar menuBar = (MenuBar) mainLayout.getChildren().get(0);
+        Menu adminMenu = menuBar.getMenus().get(0);
+        MenuItem showingsItem = adminMenu.getItems().get(0);
+        MenuItem moviesItem = adminMenu.getItems().get(1);
+        MenuItem ticketsItem = adminMenu.getItems().get(2);
+        ticketsItem.setVisible(false);
+        showingsItem.setVisible(true);
+        moviesItem.setVisible(true);
+
+        //Set window title
+        window.setTitle("Fabulous Cinema | Purchase Tickets | " + userLoggedIn.getUsername());
+
+        //Get the title Label from the old layout and change the title
+        VBox mainVBoxShowings = (VBox) mainLayout.getChildren().get(1);
+        Label lbl_ShowingsMenuTitle = (Label) mainVBoxShowings.getChildren().get(0);
+        lbl_ShowingsMenuTitle.setText("Purchase Tickets");
+
+        //Remove showingForm and add ticketForm
+        TicketForm ticketForm = new TicketForm(userLoggedIn, new ArrayList<>());
+        mainLayout.getChildren().remove(2);
+        mainLayout.getChildren().add(2, ticketForm.getTicketForm());
+
+        //Remove potential Movie TableView and add Showings TableView
+        VBox showingsMain = (VBox) setLayout().getChildren().get(1);
+        mainLayout.getChildren().remove(1);
+        mainLayout.getChildren().add(1, showingsMain);
+
+        handleAllActions(mainLayout);
 
     }
 
@@ -199,12 +238,12 @@ public class PurchaseTickets extends Window{
         col_Price.setMinWidth(50);
         col_Price.setCellValueFactory(c -> new SimpleStringProperty(String.format("%.2f", c.getValue().getMovie().getTicketPrice())));
 
-        tableView.getColumns().addAll(col_StartTime, col_EndTime, col_Title, col_Seats, col_Price);
+        tableView.getColumns().addAll(col_StartTime, col_EndTime, col_Title, col_Seats, col_TicketsAvailable, col_Price);
 
         return tableView;
     }
 
-    private void handleMenuActions(VBox layout, Stage loginWindow){
+    private void handleMenuActions(VBox layout){
         //Get all the nodes needed to hide from the layout for the user
         MenuBar menuBar = (MenuBar) layout.getChildren().get(0);
 
@@ -219,7 +258,7 @@ public class PurchaseTickets extends Window{
             @Override
             public void handle(ActionEvent actionEvent) {
 
-                new ManageShowings(layout, db, loginWindow, window, userLoggedIn);
+                new ManageShowings(layout, db, loginWindow, window, userLoggedIn, (VBox) setLayout().getChildren().get(1));
                 //new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Showings menu! But not yet...").show();
             }
         });
@@ -228,7 +267,7 @@ public class PurchaseTickets extends Window{
         menuBar.getMenus().get(0).getItems().get(1).setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Movies menu! Fun!").show();
+                new ManageMovies(layout, db, loginWindow, window, userLoggedIn, (VBox) setLayout().getChildren().get(1));
             }
         });
 
@@ -323,6 +362,7 @@ public class PurchaseTickets extends Window{
                                         //Reload the list to show the changes
                                         showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
                                         tv_ShowingsRoom1.setItems(showingsListRoom1);
+                                        tv_ShowingsRoom1.getSelectionModel().clearSelection();
 
                                     }
                                 });
@@ -381,12 +421,12 @@ public class PurchaseTickets extends Window{
 
                                         formGrid.setVisible(false);
 
-                                        //Subtract the amount of purchased seats of the total amount of seats from the room
-//                                Room room = newShowing.getRoom();
-//                                room.setAmtOfSeats(room.getAmtOfSeats() - cmb_AmtOfSeats.getValue());
-//
-//                                showingsListRoom2 = FXCollections.observableArrayList(newShowing.getRoom().getShowingList());
-//                                tv_ShowingsRoom2.setItems(showingsListRoom2);
+                                        //Subtract the amount of purchased seats of the total amount of available tickets
+                                        newShowing.setTicketsAvailable(newShowing.getTicketsAvailable() - cmb_AmtOfSeats.getValue());
+
+                                        //Reload the list to show the changes
+                                        showingsListRoom2 = FXCollections.observableArrayList(db.getShowingsRoom2());
+                                        tv_ShowingsRoom2.setItems(showingsListRoom2);
                                     }
                                 });
                             }
@@ -412,6 +452,8 @@ public class PurchaseTickets extends Window{
         btn_Clear.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                tv_ShowingsRoom1.getSelectionModel().clearSelection();
+                tv_ShowingsRoom2.getSelectionModel().clearSelection();
                 lbl_RoomNr.setText("");
                 lbl_Title.setText("");
                 lbl_StartTime.setText("");
@@ -422,15 +464,17 @@ public class PurchaseTickets extends Window{
         });
     }
 
-    public void handleAllActions(VBox layout, Stage loginWindow){
+    public void handleAllActions(VBox layout){
         //Get the Form GridPane
         GridPane formGrid = (GridPane) layout.getChildren().get(2);
 
         //Hide the form
         formGrid.setVisible(false);
 
+        //Handle all TableView and Button actions
         handleTableViewActions(layout);
 
-        handleMenuActions(layout, loginWindow);
+        //Handle all Menu actions
+        handleMenuActions(layout);
     }
 }
