@@ -35,7 +35,6 @@ public class PurchaseTickets extends Window{
     private Database db;
     private ObservableList<Showing> showingsListRoom1, showingsListRoom2;
     private List<Integer> amountOfSeatsChoices;
-//    private PurchaseTickets purchaseTickets = this;
 
     public PurchaseTickets(Stage loginWindow, Database db, User userLoggedIn){
         //Initializing data
@@ -60,221 +59,11 @@ public class PurchaseTickets extends Window{
         window.setScene(scene);
         window.show();
 
-        //Get all the nodes needed to hide from the layout for the user
-        MenuBar menuBar = (MenuBar) layout.getChildren().get(0);
+        handleAllActions(layout, loginWindow);
 
-        if (userLoggedIn.getUserType() == UserType.USER){
-            //Hide the Admin menu for the user
-            Menu adminMenu = menuBar.getMenus().get(0);
-            adminMenu.setVisible(false);
-        }
+    }
 
-        //Get the buttons from the Form GridPane
-        GridPane formGrid = (GridPane) layout.getChildren().get(2);
-        Button btn_Purchase = (Button) formGrid.getChildren().get(8);
-        Button btn_Clear = (Button) formGrid.getChildren().get(13);
-
-        //Hide the form
-        formGrid.setVisible(false);
-
-        //Get the labels and text field from the Form GridPane
-        Label lbl_RoomNr = (Label) formGrid.getChildren().get(1);
-        Label lbl_Title = (Label) formGrid.getChildren().get(3);
-        Label lbl_StartTime = (Label) formGrid.getChildren().get(5);
-        Label lbl_EndTime = (Label) formGrid.getChildren().get(10);
-        TextField txt_CustomerName = (TextField) formGrid.getChildren().get(12);
-
-        //Get the ComboBox from the Form GridPane
-        ComboBox<Integer> cmb_AmtOfSeats = (ComboBox<Integer>) formGrid.getChildren().get(7);
-
-        //Get the TableViews from the layout
-        VBox mainVBoxTickets = (VBox) layout.getChildren().get(1);
-        HBox hBoxTickets = (HBox) mainVBoxTickets.getChildren().get(1);
-        VBox showingsRoom1 = (VBox) hBoxTickets.getChildren().get(0);
-        VBox showingsRoom2 = (VBox) hBoxTickets.getChildren().get(1);
-
-        TableView<Showing> tv_ShowingsRoom1 = (TableView<Showing>) showingsRoom1.getChildren().get(1);
-        TableView<Showing> tv_ShowingsRoom2 = (TableView<Showing>) showingsRoom2.getChildren().get(1);
-
-        //Create listeners on the selected items from the TableViews
-
-        //Shows form to purchase tickets after an item in the TableView for Room 1 is clicked
-        tv_ShowingsRoom1.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Showing>() {
-            @Override
-            public void changed(ObservableValue<? extends Showing> observableValue, Showing oldShowing, Showing newShowing) {
-                    //Show and fill the form
-                    formGrid.setVisible(true);
-                    lbl_RoomNr.setText(newShowing.getRoom().getRoomName());
-                    lbl_Title.setText(newShowing.getMovie().getTitle());
-                    lbl_StartTime.setText(newShowing.getStartTime().toString());
-                    lbl_EndTime.setText(newShowing.getEndTime().toString());
-
-                //Shows a confirmation message that the purchase is complete after the button is clicked and the user did not click "cancel"
-                btn_Purchase.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent actionEvent) {
-                        if (tv_ShowingsRoom1.getSelectionModel().selectedItemProperty() != null){
-                            //Checks if the Text Field is not empty
-                            if (!txt_CustomerName.getText().equals(""))
-                            {
-                                //Shows an Alert to ask for confirmation
-                                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to buy a ticket?");
-                                alert.setTitle("Confirm purchase");
-                                alert.showAndWait().ifPresent(response -> {
-                                    if (response != ButtonType.CANCEL){
-                                        //Create new Ticket
-                                        Ticket ticket = new Ticket(tv_ShowingsRoom1.getSelectionModel().getSelectedItem().getMovie().getTicketPrice(),tv_ShowingsRoom1.getSelectionModel().getSelectedItem().getMovie().getTitle(),cmb_AmtOfSeats.getValue(),txt_CustomerName.getText(),newShowing);
-
-                                        //Show alert to confirm purchase
-                                        Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie!");
-                                        alertConfirm.setTitle("Purchase complete");
-                                        alertConfirm.showAndWait();
-
-                                        //Add the ticket to the ticket list of the user that is logged in
-                                        userLoggedIn.addTicket(ticket);
-
-                                        //Hide the form
-                                        formGrid.setVisible(false);
-
-                                        //Subtract the amount of purchased seats of the total amount of available tickets
-                                        newShowing.setTicketsAvailable(newShowing.getTicketsAvailable() - cmb_AmtOfSeats.getValue());
-
-                                        //Reload the list to show the changes
-                                        showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
-                                        tv_ShowingsRoom1.setItems(showingsListRoom1);
-
-                                    }
-                                });
-                            }
-                            else{
-                                Alert alertEmptyField = new Alert(Alert.AlertType.INFORMATION, "Please enter your name before purchasing a ticket!");
-                                alertEmptyField.setTitle("Empty field");
-                                alertEmptyField.show();
-                            }
-                        }
-                        else{
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please select a showing before submitting!");
-                            alert.setTitle("No showing selected");
-                            alert.show();
-                        }
-                    }
-                });
-            }
-        });
-
-        //Shows form to purchase tickets after an item in the TableView for Room 2 is clicked
-        tv_ShowingsRoom2.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Showing>() {
-            @Override
-            public void changed(ObservableValue<? extends Showing> observableValue, Showing oldShowing, Showing newShowing) {
-                //Show and fill the form
-                formGrid.setVisible(true);
-                lbl_RoomNr.setText(newShowing.getRoom().getRoomName());
-                lbl_Title.setText(newShowing.getMovie().getTitle());
-                lbl_StartTime.setText(newShowing.getStartTime().toString());
-                lbl_EndTime.setText(newShowing.getEndTime().toString());
-
-                //Shows a confirmation message that the purchase is complete after the button is clicked
-                btn_Purchase.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent actionEvent) {
-
-                        if (tv_ShowingsRoom2.getSelectionModel().selectedItemProperty() != null){
-                            //Checks if the Text Field is not empty
-                            if (!txt_CustomerName.getText().equals(""))
-                            {
-
-                                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to buy a ticket?");
-                                alert.setTitle("Confirm purchase");
-                                alert.showAndWait().ifPresent(response -> {
-                                    if (response != ButtonType.CANCEL){
-                                        //Create new Ticket
-                                        Ticket ticket = new Ticket(tv_ShowingsRoom2.getSelectionModel().getSelectedItem().getMovie().getTicketPrice(),tv_ShowingsRoom2.getSelectionModel().getSelectedItem().getMovie().getTitle(),cmb_AmtOfSeats.getValue(),txt_CustomerName.getText(),newShowing);
-
-                                        //Show alert to confirm purchase
-                                        Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie!");
-                                        alertConfirm.setTitle("Purchase complete");
-                                        alertConfirm.showAndWait();
-
-                                        //Add the ticket to the ticket list of the user that is logged in
-                                        userLoggedIn.addTicket(ticket);
-
-                                        formGrid.setVisible(false);
-
-                                        //Subtract the amount of purchased seats of the total amount of seats from the room
-//                                Room room = newShowing.getRoom();
-//                                room.setAmtOfSeats(room.getAmtOfSeats() - cmb_AmtOfSeats.getValue());
-//
-//                                showingsListRoom2 = FXCollections.observableArrayList(newShowing.getRoom().getShowingList());
-//                                tv_ShowingsRoom2.setItems(showingsListRoom2);
-                                    }
-                                });
-                            }
-                            else{
-                                Alert alertEmptyField = new Alert(Alert.AlertType.INFORMATION, "Please enter your name before purchasing a ticket!");
-                                alertEmptyField.setTitle("Empty field");
-                                alertEmptyField.show();
-                            }
-                        }
-                        else{
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please select a showing before submitting!");
-                            alert.setTitle("No showing selected");
-                            alert.show();
-                        }
-
-
-                    }
-                });
-            }
-        });
-
-        //Clears all the labels and text fields in the form when the button is clicked and hides the form
-        btn_Clear.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                lbl_RoomNr.setText("");
-                lbl_Title.setText("");
-                lbl_StartTime.setText("");
-                lbl_EndTime.setText("");
-                txt_CustomerName.clear();
-                formGrid.setVisible(false);
-            }
-        });
-
-        //Shows the "Manage Showings" menu when the right menu item is clicked
-        menuBar.getMenus().get(0).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-
-                new ManageShowings(layout, db, loginWindow, window, userLoggedIn);
-                //new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Showings menu! But not yet...").show();
-            }
-        });
-
-        //Shows the "Manage Movies" menu when the right menu item is clicked
-        menuBar.getMenus().get(0).getItems().get(1).setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Movies menu! Fun!").show();
-            }
-        });
-
-        //Shows the about-message when the right menu item is clicked
-        menuBar.getMenus().get(1).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                new Alert(Alert.AlertType.INFORMATION, "I made this application. Don't try screwing with it, it will screw back. Promise. \nDoes this count as profanity by the way? I hope not.").show();
-            }
-        });
-
-        //Create event on logout menu-item
-        menuBar.getMenus().get(2).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                //Initialize a Stage with the value of the LoginWindow for logging out
-                loginWindow.show();
-                window.close();
-            }
-        });
+    public PurchaseTickets(){
 
     }
 
@@ -413,5 +202,235 @@ public class PurchaseTickets extends Window{
         tableView.getColumns().addAll(col_StartTime, col_EndTime, col_Title, col_Seats, col_Price);
 
         return tableView;
+    }
+
+    private void handleMenuActions(VBox layout, Stage loginWindow){
+        //Get all the nodes needed to hide from the layout for the user
+        MenuBar menuBar = (MenuBar) layout.getChildren().get(0);
+
+        if (userLoggedIn.getUserType() == UserType.USER){
+            //Hide the Admin menu for the user
+            Menu adminMenu = menuBar.getMenus().get(0);
+            adminMenu.setVisible(false);
+        }
+
+        //Shows the "Manage Showings" menu when the right menu item is clicked
+        menuBar.getMenus().get(0).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+                new ManageShowings(layout, db, loginWindow, window, userLoggedIn);
+                //new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Showings menu! But not yet...").show();
+            }
+        });
+
+        //Shows the "Manage Movies" menu when the right menu item is clicked
+        menuBar.getMenus().get(0).getItems().get(1).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Movies menu! Fun!").show();
+            }
+        });
+
+        //Shows the about-message when the right menu item is clicked
+        menuBar.getMenus().get(1).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                new Alert(Alert.AlertType.INFORMATION, "I made this application. Don't try screwing with it, it will screw back. Promise. \nDoes this count as profanity by the way? I hope not.").show();
+            }
+        });
+
+        //Create event on logout menu-item
+        menuBar.getMenus().get(2).getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                //Initialize a Stage with the value of the LoginWindow for logging out
+                loginWindow.show();
+                window.close();
+            }
+        });
+    }
+
+    private void handleTableViewActions(VBox layout){
+
+        //Get the buttons from the Form GridPane
+        GridPane formGrid = (GridPane) layout.getChildren().get(2);
+        Button btn_Purchase = (Button) formGrid.getChildren().get(8);
+        Button btn_Clear = (Button) formGrid.getChildren().get(13);
+
+        //Get the labels and text field from the Form GridPane
+        Label lbl_RoomNr = (Label) formGrid.getChildren().get(1);
+        Label lbl_Title = (Label) formGrid.getChildren().get(3);
+        Label lbl_StartTime = (Label) formGrid.getChildren().get(5);
+        Label lbl_EndTime = (Label) formGrid.getChildren().get(10);
+        TextField txt_CustomerName = (TextField) formGrid.getChildren().get(12);
+
+        //Get the ComboBox from the Form GridPane
+        ComboBox<Integer> cmb_AmtOfSeats = (ComboBox<Integer>) formGrid.getChildren().get(7);
+
+        //Get the TableViews from the layout
+        VBox mainVBoxTickets = (VBox) layout.getChildren().get(1);
+        HBox hBoxTickets = (HBox) mainVBoxTickets.getChildren().get(1);
+        VBox showingsRoom1 = (VBox) hBoxTickets.getChildren().get(0);
+        VBox showingsRoom2 = (VBox) hBoxTickets.getChildren().get(1);
+
+        TableView<Showing> tv_ShowingsRoom1 = (TableView<Showing>) showingsRoom1.getChildren().get(1);
+        TableView<Showing> tv_ShowingsRoom2 = (TableView<Showing>) showingsRoom2.getChildren().get(1);
+
+        //Create listeners on the selected items from the TableViews
+
+        //Shows form to purchase tickets after an item in the TableView for Room 1 is clicked
+        tv_ShowingsRoom1.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Showing>() {
+            @Override
+            public void changed(ObservableValue<? extends Showing> observableValue, Showing oldShowing, Showing newShowing) {
+                //Show and fill the form
+                formGrid.setVisible(true);
+                lbl_RoomNr.setText(newShowing.getRoom().getRoomName());
+                lbl_Title.setText(newShowing.getMovie().getTitle());
+                lbl_StartTime.setText(newShowing.getStartTime().toString());
+                lbl_EndTime.setText(newShowing.getEndTime().toString());
+
+                //Shows a confirmation message that the purchase is complete after the button is clicked and the user did not click "cancel"
+                btn_Purchase.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        if (tv_ShowingsRoom1.getSelectionModel().selectedItemProperty() != null){
+                            //Checks if the Text Field is not empty
+                            if (!txt_CustomerName.getText().equals(""))
+                            {
+                                //Shows an Alert to ask for confirmation
+                                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to buy a ticket?");
+                                alert.setTitle("Confirm purchase");
+                                alert.showAndWait().ifPresent(response -> {
+                                    if (response != ButtonType.CANCEL){
+                                        //Create new Ticket
+                                        Ticket ticket = new Ticket(tv_ShowingsRoom1.getSelectionModel().getSelectedItem().getMovie().getTicketPrice(),tv_ShowingsRoom1.getSelectionModel().getSelectedItem().getMovie().getTitle(),cmb_AmtOfSeats.getValue(),txt_CustomerName.getText(),newShowing);
+
+                                        //Show alert to confirm purchase
+                                        Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie!");
+                                        alertConfirm.setTitle("Purchase complete");
+                                        alertConfirm.showAndWait();
+
+                                        //Add the ticket to the ticket list of the user that is logged in
+                                        userLoggedIn.addTicket(ticket);
+
+                                        //Hide the form
+                                        formGrid.setVisible(false);
+
+                                        //Subtract the amount of purchased seats of the total amount of available tickets
+                                        newShowing.setTicketsAvailable(newShowing.getTicketsAvailable() - cmb_AmtOfSeats.getValue());
+
+                                        //Reload the list to show the changes
+                                        showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
+                                        tv_ShowingsRoom1.setItems(showingsListRoom1);
+
+                                    }
+                                });
+                            }
+                            else{
+                                Alert alertEmptyField = new Alert(Alert.AlertType.INFORMATION, "Please enter your name before purchasing a ticket!");
+                                alertEmptyField.setTitle("Empty field");
+                                alertEmptyField.show();
+                            }
+                        }
+                        else{
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please select a showing before submitting!");
+                            alert.setTitle("No showing selected");
+                            alert.show();
+                        }
+                    }
+                });
+            }
+        });
+
+        //Shows form to purchase tickets after an item in the TableView for Room 2 is clicked
+        tv_ShowingsRoom2.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Showing>() {
+            @Override
+            public void changed(ObservableValue<? extends Showing> observableValue, Showing oldShowing, Showing newShowing) {
+                //Show and fill the form
+                formGrid.setVisible(true);
+                lbl_RoomNr.setText(newShowing.getRoom().getRoomName());
+                lbl_Title.setText(newShowing.getMovie().getTitle());
+                lbl_StartTime.setText(newShowing.getStartTime().toString());
+                lbl_EndTime.setText(newShowing.getEndTime().toString());
+
+                //Shows a confirmation message that the purchase is complete after the button is clicked
+                btn_Purchase.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+
+                        if (tv_ShowingsRoom2.getSelectionModel().selectedItemProperty() != null){
+                            //Checks if the Text Field is not empty
+                            if (!txt_CustomerName.getText().equals(""))
+                            {
+
+                                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to buy a ticket?");
+                                alert.setTitle("Confirm purchase");
+                                alert.showAndWait().ifPresent(response -> {
+                                    if (response != ButtonType.CANCEL){
+                                        //Create new Ticket
+                                        Ticket ticket = new Ticket(tv_ShowingsRoom2.getSelectionModel().getSelectedItem().getMovie().getTicketPrice(),tv_ShowingsRoom2.getSelectionModel().getSelectedItem().getMovie().getTitle(),cmb_AmtOfSeats.getValue(),txt_CustomerName.getText(),newShowing);
+
+                                        //Show alert to confirm purchase
+                                        Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie!");
+                                        alertConfirm.setTitle("Purchase complete");
+                                        alertConfirm.showAndWait();
+
+                                        //Add the ticket to the ticket list of the user that is logged in
+                                        userLoggedIn.addTicket(ticket);
+
+                                        formGrid.setVisible(false);
+
+                                        //Subtract the amount of purchased seats of the total amount of seats from the room
+//                                Room room = newShowing.getRoom();
+//                                room.setAmtOfSeats(room.getAmtOfSeats() - cmb_AmtOfSeats.getValue());
+//
+//                                showingsListRoom2 = FXCollections.observableArrayList(newShowing.getRoom().getShowingList());
+//                                tv_ShowingsRoom2.setItems(showingsListRoom2);
+                                    }
+                                });
+                            }
+                            else{
+                                Alert alertEmptyField = new Alert(Alert.AlertType.INFORMATION, "Please enter your name before purchasing a ticket!");
+                                alertEmptyField.setTitle("Empty field");
+                                alertEmptyField.show();
+                            }
+                        }
+                        else{
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please select a showing before submitting!");
+                            alert.setTitle("No showing selected");
+                            alert.show();
+                        }
+
+
+                    }
+                });
+            }
+        });
+
+        //Clears all the labels and text fields in the form when the button is clicked and hides the form
+        btn_Clear.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                lbl_RoomNr.setText("");
+                lbl_Title.setText("");
+                lbl_StartTime.setText("");
+                lbl_EndTime.setText("");
+                txt_CustomerName.clear();
+                formGrid.setVisible(false);
+            }
+        });
+    }
+
+    public void handleAllActions(VBox layout, Stage loginWindow){
+        //Get the Form GridPane
+        GridPane formGrid = (GridPane) layout.getChildren().get(2);
+
+        //Hide the form
+        formGrid.setVisible(false);
+
+        handleTableViewActions(layout);
+
+        handleMenuActions(layout, loginWindow);
     }
 }
