@@ -93,7 +93,6 @@ public class Login extends Window{
 
     }
 
-    @Override
     public VBox setLayout(){
 
         //Create main vertical layout

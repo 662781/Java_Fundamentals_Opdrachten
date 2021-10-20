@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import nl.inholland.javafx.Database.Database;
 import nl.inholland.javafx.Models.*;
 import nl.inholland.javafx.Models.Enums.UserType;
+import nl.inholland.javafx.UI.Forms.TicketForm;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -34,6 +35,7 @@ public class PurchaseTickets extends Window{
     private Database db;
     private ObservableList<Showing> showingsListRoom1, showingsListRoom2;
     private List<Integer> amountOfSeatsChoices;
+//    private PurchaseTickets purchaseTickets = this;
 
     public PurchaseTickets(Stage loginWindow, Database db, User userLoggedIn){
         //Initializing data
@@ -243,7 +245,7 @@ public class PurchaseTickets extends Window{
             @Override
             public void handle(ActionEvent actionEvent) {
 
-                new ManageShowings(scene, layout, db, loginWindow, window, userLoggedIn);
+                new ManageShowings(layout, db, loginWindow, window, userLoggedIn);
                 //new Alert(Alert.AlertType.INFORMATION, "Here comes the Manage Showings menu! But not yet...").show();
             }
         });
@@ -276,7 +278,6 @@ public class PurchaseTickets extends Window{
 
     }
 
-    @Override
     protected VBox setLayout(){
 
         //Create and setup Vertical Main Layout
@@ -361,52 +362,9 @@ public class PurchaseTickets extends Window{
 
         mainVBoxTickets.getChildren().addAll(hBoxTickets);
 
-
-        //Create secondary Node (GridPane) for form
-        GridPane formGridPane = new GridPane();
-
-        formGridPane.setPadding(new Insets(10));
-        formGridPane.setHgap(30);
-        formGridPane.setVgap(10);
-        formGridPane.setId("FormGrid");
-
-        //Create Nodes
-
-        //Create all Labels
-        Label lbl_Room = new Label("Room");
-        Label lbl_RoomNumber = new Label();
-        Label lbl_Start = new Label("Start");
-        Label lbl_StartTime = new Label();
-        Label lbl_End = new Label("End");
-        Label lbl_EndTime = new Label();
-        Label lbl_Title = new Label("Movie title");
-        Label lbl_ShowTitle = new Label();
-        Label lbl_NrOfSeats = new Label("No. of seats");
-        Label lbl_Name = new Label("Name");
-
-        //Create ComboBox
-        ComboBox<Integer> cmb_NrOfSeats = new ComboBox<>();
-        amountOfSeatsChoices.add(1);
-        amountOfSeatsChoices.add(2);
-        amountOfSeatsChoices.add(3);
-        amountOfSeatsChoices.add(4);
-        amountOfSeatsChoices.add(5);
-        ObservableList<Integer> seats = FXCollections.observableArrayList(amountOfSeatsChoices);
-        cmb_NrOfSeats.setItems(seats);
-        cmb_NrOfSeats.getSelectionModel().selectFirst();
-
-        //Create TextField
-        TextField txt_customerName = new TextField();
-        txt_customerName.setPromptText("Username");
-        txt_customerName.setText(userLoggedIn.getUsername());
-
-        //Create Buttons
-        Button btn_Purchase = new Button("Purchase");
-        Button btn_Clear = new Button("Clear");
-
-        formGridPane.addRow(0, lbl_Room, lbl_RoomNumber, lbl_Title, lbl_ShowTitle);
-        formGridPane.addRow(1, lbl_Start, lbl_StartTime, lbl_NrOfSeats, cmb_NrOfSeats, btn_Purchase);
-        formGridPane.addRow(2, lbl_End, lbl_EndTime, lbl_Name, txt_customerName, btn_Clear);
+        //Gets the ticketForm from the TicketForm class
+        TicketForm ticketForm = new TicketForm(userLoggedIn, amountOfSeatsChoices);
+        GridPane formGridPane = ticketForm.getTicketForm();
 
         //Creat Node (Label) for stripe at the bottom
         Label lbl_Stripe = new Label();

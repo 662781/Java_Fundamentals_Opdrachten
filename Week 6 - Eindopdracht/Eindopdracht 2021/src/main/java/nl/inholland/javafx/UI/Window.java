@@ -12,7 +12,4 @@ public abstract class Window{
     public Stage getStage() {
         return window;
     }
-
-    //Abstract method
-    protected abstract Node setLayout();
 }
