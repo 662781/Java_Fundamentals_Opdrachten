@@ -10,7 +10,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -18,14 +17,7 @@ import javafx.stage.Stage;
 import nl.inholland.javafx.Database.Database;
 import nl.inholland.javafx.Models.*;
 import nl.inholland.javafx.Models.Enums.UserType;
-import nl.inholland.javafx.UI.Forms.ShowingForm;
 import nl.inholland.javafx.UI.Forms.TicketForm;
-
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -346,7 +338,7 @@ public class PurchaseTickets extends Window{
                                         Ticket ticket = new Ticket(newShowing, txt_CustomerName.getText(), cmb_AmtOfSeats.getValue());
 
                                         //Show alert to confirm purchase
-                                        Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie!");
+                                        Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie! Double-Click Tickets Left to see changes");
                                         alertConfirm.setTitle("Purchase complete");
                                         alertConfirm.showAndWait();
 
@@ -358,11 +350,6 @@ public class PurchaseTickets extends Window{
 
                                         //Subtract the amount of purchased seats of the total amount of available tickets
                                         newShowing.setTicketsAvailable(newShowing.getTicketsAvailable() - cmb_AmtOfSeats.getValue());
-
-                                        //Reload the list to show the changes
-                                        showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
-                                        tv_ShowingsRoom1.setItems(showingsListRoom1);
-
                                     }
                                 });
                             }
@@ -379,6 +366,11 @@ public class PurchaseTickets extends Window{
                         }
                     }
                 });
+
+                //Reload the list to show the changes
+//                showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
+//                tv_ShowingsRoom1.setItems(showingsListRoom1);
+//                //new Alert(Alert.AlertType.INFORMATION, "List reloaded").show();
             }
         });
 
@@ -411,7 +403,7 @@ public class PurchaseTickets extends Window{
                                         Ticket ticket = new Ticket(newShowing, txt_CustomerName.getText(), cmb_AmtOfSeats.getValue());
 
                                         //Show alert to confirm purchase
-                                        Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie!");
+                                        Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie! Double-Click Tickets Left to see changes");
                                         alertConfirm.setTitle("Purchase complete");
                                         alertConfirm.showAndWait();
 
@@ -423,9 +415,9 @@ public class PurchaseTickets extends Window{
                                         //Subtract the amount of purchased seats of the total amount of available tickets
                                         newShowing.setTicketsAvailable(newShowing.getTicketsAvailable() - cmb_AmtOfSeats.getValue());
 
-                                        //Reload the list to show the changes
-                                        showingsListRoom2 = FXCollections.observableArrayList(db.getShowingsRoom2());
-                                        tv_ShowingsRoom2.setItems(showingsListRoom2);
+//                                        //Reload the list to show the changes
+//                                        showingsListRoom2 = FXCollections.observableArrayList(db.getShowingsRoom2());
+//                                        tv_ShowingsRoom2.setItems(showingsListRoom2);
                                     }
                                 });
                             }
@@ -451,8 +443,6 @@ public class PurchaseTickets extends Window{
         btn_Clear.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                tv_ShowingsRoom1.getSelectionModel().clearSelection();
-                tv_ShowingsRoom2.getSelectionModel().clearSelection();
                 lbl_RoomNr.setText("");
                 lbl_Title.setText("");
                 lbl_StartTime.setText("");

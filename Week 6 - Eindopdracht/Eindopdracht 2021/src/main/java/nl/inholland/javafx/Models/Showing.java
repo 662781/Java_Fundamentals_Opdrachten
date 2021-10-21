@@ -1,7 +1,6 @@
 package nl.inholland.javafx.Models;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 public class Showing{
     private Room room;

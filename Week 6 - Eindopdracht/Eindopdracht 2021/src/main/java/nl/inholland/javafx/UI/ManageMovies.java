@@ -6,18 +6,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nl.inholland.javafx.Database.Database;
 import nl.inholland.javafx.Models.Movie;
-import nl.inholland.javafx.Models.Showing;
 import nl.inholland.javafx.Models.User;
 import nl.inholland.javafx.UI.Forms.MovieForm;
-import nl.inholland.javafx.UI.Forms.ShowingForm;
 
 public class ManageMovies extends Window{
 
@@ -199,7 +195,7 @@ public class ManageMovies extends Window{
 
         TableColumn<Movie, String> col_TicketPrice = new TableColumn<>("Price (Euro)");
         col_TicketPrice.setMinWidth(100);
-        col_TicketPrice.setCellValueFactory(c -> new SimpleStringProperty(Double.toString(c.getValue().getTicketPrice())));
+        col_TicketPrice.setCellValueFactory(c -> new SimpleStringProperty(String.format("%.2f", c.getValue().getTicketPrice())));
 
         TableColumn<Movie, String> col_Duration = new TableColumn<>("Duration (Min)");
         col_Duration.setMinWidth(100);

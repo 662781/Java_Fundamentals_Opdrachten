@@ -1,7 +1,6 @@
 package nl.inholland.javafx.Models;
 
 import nl.inholland.javafx.Models.Enums.UserType;
-
 import java.util.ArrayList;
 import java.util.List;
 

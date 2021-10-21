@@ -5,10 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import nl.inholland.javafx.Models.Movie;
-import nl.inholland.javafx.Models.Room;
-
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 

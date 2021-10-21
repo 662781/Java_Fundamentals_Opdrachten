@@ -13,3 +13,8 @@ __Admin:__
 Username: _Bas_ | Password: _vcpw_
 
 
+###Additional info
+
+Double click the "Tickets Left" cell from one of the TableViews in the Purchase Tickets menu to reload the list
+
+

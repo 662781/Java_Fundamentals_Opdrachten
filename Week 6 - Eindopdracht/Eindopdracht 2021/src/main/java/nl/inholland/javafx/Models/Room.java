@@ -1,9 +1,6 @@
 package nl.inholland.javafx.Models;
 
 import nl.inholland.javafx.Database.Database;
-import nl.inholland.javafx.UI.Login;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class Room {

@@ -1,6 +1,5 @@
 package nl.inholland.javafx.UI;
 
-import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nl.inholland.javafx.Database.Database;
