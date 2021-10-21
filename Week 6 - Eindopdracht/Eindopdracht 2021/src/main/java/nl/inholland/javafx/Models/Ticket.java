@@ -2,13 +2,14 @@ package nl.inholland.javafx.Models;
 
 public class Ticket {
     //Fields
-    private double price;
-    private String movieTitle, userName;
-    private Showing showing;
+    private final double price;
+    private final String movieTitle;
+    private final String userName;
+    private final Showing showing;
     //Amount of seats the user purchased
-    private int amtOfSeats;
+    private final int amtOfSeats;
 
-    public Ticket(Showing showing, String userName, int amtOfSeats){
+    public Ticket(Showing showing, String userName, int amtOfSeats) {
         this.showing = showing;
         this.price = showing.getMovie().getTicketPrice();
         this.movieTitle = showing.getMovie().getTitle();

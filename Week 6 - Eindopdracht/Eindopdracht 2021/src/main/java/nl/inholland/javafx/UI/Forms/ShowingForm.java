@@ -11,13 +11,14 @@ import nl.inholland.javafx.Models.Room;
 import java.time.LocalDate;
 import java.util.List;
 
-public class ShowingForm extends Form{
+public class ShowingForm extends Form {
 
-    private List<Movie> movies;
-    private List<Room> rooms;
-    private List<String> movieTitles, roomNames;
+    private final List<Movie> movies;
+    private final List<Room> rooms;
+    private final List<String> movieTitles;
+    private final List<String> roomNames;
 
-    public ShowingForm(List<String> movieTitles, List<String> roomNames, List<Movie> movies, List<Room> rooms){
+    public ShowingForm(List<String> movieTitles, List<String> roomNames, List<Movie> movies, List<Room> rooms) {
         this.movieTitles = movieTitles;
         this.roomNames = roomNames;
         this.movies = movies;
@@ -30,7 +31,7 @@ public class ShowingForm extends Form{
     }
 
     @Override
-    public GridPane createForm(){
+    public GridPane createForm() {
         //Create new Form GridPane
         GridPane showingForm = new GridPane();
         showingForm.setPadding(new Insets(10));
@@ -54,7 +55,7 @@ public class ShowingForm extends Form{
 
         //Create ComboBox with movie titles
         ComboBox<String> cmb_MovieTitle = new ComboBox<>();
-        for (Movie movie: this.movies){
+        for (Movie movie : this.movies) {
             movieTitles.add(movie.getTitle());
         }
         ObservableList<String> movies = FXCollections.observableArrayList(movieTitles);
@@ -63,7 +64,7 @@ public class ShowingForm extends Form{
 
         //Create ComboBox with room names
         ComboBox<String> cmb_Room = new ComboBox<>();
-        for (Room room: this.rooms){
+        for (Room room : this.rooms) {
             roomNames.add(room.getRoomName());
         }
         ObservableList<String> rooms = FXCollections.observableArrayList(roomNames);

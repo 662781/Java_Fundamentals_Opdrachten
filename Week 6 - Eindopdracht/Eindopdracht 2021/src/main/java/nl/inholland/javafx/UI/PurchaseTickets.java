@@ -15,20 +15,23 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nl.inholland.javafx.Database.Database;
-import nl.inholland.javafx.Models.*;
 import nl.inholland.javafx.Models.Enums.UserType;
+import nl.inholland.javafx.Models.Showing;
+import nl.inholland.javafx.Models.Ticket;
+import nl.inholland.javafx.Models.User;
 import nl.inholland.javafx.UI.Forms.TicketForm;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class PurchaseTickets extends Window{
+public class PurchaseTickets extends Window {
 
     private ObservableList<Showing> showingsListRoom1, showingsListRoom2;
-    private List<Integer> amountOfSeatsChoices;
+    private final List<Integer> amountOfSeatsChoices;
 
     //Constructor for first initialization (new Stage)
-    public PurchaseTickets(Stage loginWindow, Database db, User userLoggedIn){
+    public PurchaseTickets(Stage loginWindow, Database db, User userLoggedIn) {
         //Initializing data
         amountOfSeatsChoices = new ArrayList<>();
         this.db = db;
@@ -57,7 +60,7 @@ public class PurchaseTickets extends Window{
     }
 
     //Constructor for switching between menus
-    public PurchaseTickets(Stage loginWindow, Database db, User userLoggedIn, VBox mainLayout, Stage mainWindow){
+    public PurchaseTickets(Stage loginWindow, Database db, User userLoggedIn, VBox mainLayout, Stage mainWindow) {
         //Initializing data
         amountOfSeatsChoices = new ArrayList<>();
         this.db = db;
@@ -98,7 +101,7 @@ public class PurchaseTickets extends Window{
 
     }
 
-    protected VBox setLayout(){
+    protected VBox setLayout() {
 
         //Create and setup Vertical Main Layout
         VBox layout = new VBox();
@@ -198,7 +201,7 @@ public class PurchaseTickets extends Window{
         return layout;
     }
 
-    private TableView setUpTableView(){
+    private TableView setUpTableView() {
         TableView<Showing> tableView = new TableView<>();
 
         tableView.setEditable(true);
@@ -235,11 +238,11 @@ public class PurchaseTickets extends Window{
         return tableView;
     }
 
-    private void handleMenuActions(VBox layout){
+    private void handleMenuActions(VBox layout) {
         //Get all the nodes needed to hide from the layout for the user
         MenuBar menuBar = (MenuBar) layout.getChildren().get(0);
 
-        if (userLoggedIn.getUserType() == UserType.USER){
+        if (userLoggedIn.getUserType() == UserType.USER) {
             //Hide the Admin menu for the user
             Menu adminMenu = menuBar.getMenus().get(0);
             adminMenu.setVisible(false);
@@ -282,7 +285,7 @@ public class PurchaseTickets extends Window{
         });
     }
 
-    private void handleTableViewActions(VBox layout){
+    private void handleTableViewActions(VBox layout) {
 
         //Get the buttons from the Form GridPane
         GridPane formGrid = (GridPane) layout.getChildren().get(2);
@@ -325,20 +328,19 @@ public class PurchaseTickets extends Window{
                 btn_Purchase.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
-                        if (tv_ShowingsRoom1.getSelectionModel().selectedItemProperty() != null){
+                        if (tv_ShowingsRoom1.getSelectionModel().selectedItemProperty() != null) {
                             //Checks if the Text Field is not empty
-                            if (!txt_CustomerName.getText().equals(""))
-                            {
+                            if (!txt_CustomerName.getText().equals("")) {
                                 //Shows an Alert to ask for confirmation
                                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to buy a ticket?");
                                 alert.setTitle("Confirm purchase");
                                 alert.showAndWait().ifPresent(response -> {
-                                    if (response != ButtonType.CANCEL){
+                                    if (response != ButtonType.CANCEL) {
                                         //Create new Ticket
                                         Ticket ticket = new Ticket(newShowing, txt_CustomerName.getText(), cmb_AmtOfSeats.getValue());
 
                                         //Show alert to confirm purchase
-                                        Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie! Double-Click Tickets Left to see changes");
+                                        Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION, "Enjoy the movie! Double-Click Tickets Left to see changes");
                                         alertConfirm.setTitle("Purchase complete");
                                         alertConfirm.showAndWait();
 
@@ -352,14 +354,12 @@ public class PurchaseTickets extends Window{
                                         newShowing.setTicketsAvailable(newShowing.getTicketsAvailable() - cmb_AmtOfSeats.getValue());
                                     }
                                 });
-                            }
-                            else{
+                            } else {
                                 Alert alertEmptyField = new Alert(Alert.AlertType.INFORMATION, "Please enter your name before purchasing a ticket!");
                                 alertEmptyField.setTitle("Empty field");
                                 alertEmptyField.show();
                             }
-                        }
-                        else{
+                        } else {
                             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please select a showing before submitting!");
                             alert.setTitle("No showing selected");
                             alert.show();
@@ -390,20 +390,19 @@ public class PurchaseTickets extends Window{
                     @Override
                     public void handle(ActionEvent actionEvent) {
 
-                        if (tv_ShowingsRoom2.getSelectionModel().selectedItemProperty() != null){
+                        if (tv_ShowingsRoom2.getSelectionModel().selectedItemProperty() != null) {
                             //Checks if the Text Field is not empty
-                            if (!txt_CustomerName.getText().equals(""))
-                            {
+                            if (!txt_CustomerName.getText().equals("")) {
 
                                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to buy a ticket?");
                                 alert.setTitle("Confirm purchase");
                                 alert.showAndWait().ifPresent(response -> {
-                                    if (response != ButtonType.CANCEL){
+                                    if (response != ButtonType.CANCEL) {
                                         //Create new Ticket
                                         Ticket ticket = new Ticket(newShowing, txt_CustomerName.getText(), cmb_AmtOfSeats.getValue());
 
                                         //Show alert to confirm purchase
-                                        Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie! Double-Click Tickets Left to see changes");
+                                        Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION, "Enjoy the movie! Double-Click Tickets Left to see changes");
                                         alertConfirm.setTitle("Purchase complete");
                                         alertConfirm.showAndWait();
 
@@ -420,14 +419,12 @@ public class PurchaseTickets extends Window{
 //                                        tv_ShowingsRoom2.setItems(showingsListRoom2);
                                     }
                                 });
-                            }
-                            else{
+                            } else {
                                 Alert alertEmptyField = new Alert(Alert.AlertType.INFORMATION, "Please enter your name before purchasing a ticket!");
                                 alertEmptyField.setTitle("Empty field");
                                 alertEmptyField.show();
                             }
-                        }
-                        else{
+                        } else {
                             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please select a showing before submitting!");
                             alert.setTitle("No showing selected");
                             alert.show();
@@ -453,7 +450,7 @@ public class PurchaseTickets extends Window{
         });
     }
 
-    public void handleAllActions(VBox layout){
+    public void handleAllActions(VBox layout) {
         //Get the Form GridPane
         GridPane formGrid = (GridPane) layout.getChildren().get(2);
 

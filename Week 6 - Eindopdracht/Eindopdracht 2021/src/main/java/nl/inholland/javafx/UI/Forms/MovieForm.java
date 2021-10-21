@@ -3,17 +3,20 @@ package nl.inholland.javafx.UI.Forms;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovieForm extends Form{
+public class MovieForm extends Form {
 
     private ObservableList<Double> prices;
-    private List<Double> pricesList;
+    private final List<Double> pricesList;
 
-    public MovieForm(){
+    public MovieForm() {
         pricesList = new ArrayList<>();
         form = createForm();
     }
@@ -23,7 +26,7 @@ public class MovieForm extends Form{
     }
 
     @Override
-    public GridPane createForm(){
+    public GridPane createForm() {
         //Create new Form GridPane
         GridPane movieForm = new GridPane();
         movieForm.setPadding(new Insets(10));

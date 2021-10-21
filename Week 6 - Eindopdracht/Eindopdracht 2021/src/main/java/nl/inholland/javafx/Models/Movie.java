@@ -2,11 +2,11 @@ package nl.inholland.javafx.Models;
 
 public class Movie {
     //Fields
-    private String title;
-    private double ticketPrice;
-    private int duration;
+    private final String title;
+    private final double ticketPrice;
+    private final int duration;
 
-    public Movie(String title, double ticketPrice, int duration){
+    public Movie(String title, double ticketPrice, int duration) {
         this.title = title;
         this.ticketPrice = ticketPrice;
         this.duration = duration;
@@ -24,9 +24,6 @@ public class Movie {
     public int getDuration() {
         return duration;
     }
-
-
-
 
 
 }

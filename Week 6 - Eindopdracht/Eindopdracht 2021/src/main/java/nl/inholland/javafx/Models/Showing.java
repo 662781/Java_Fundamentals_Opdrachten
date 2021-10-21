@@ -2,11 +2,11 @@ package nl.inholland.javafx.Models;
 
 import java.time.LocalDateTime;
 
-public class Showing{
-    private Room room;
-    private Movie movie;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+public class Showing {
+    private final Room room;
+    private final Movie movie;
+    private final LocalDateTime startTime;
+    private final LocalDateTime endTime;
     private int ticketsAvailable;
 
     public Showing(Room room, Movie movie, LocalDateTime startTime) {

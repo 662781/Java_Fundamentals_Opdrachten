@@ -15,11 +15,11 @@ import nl.inholland.javafx.Models.Movie;
 import nl.inholland.javafx.Models.User;
 import nl.inholland.javafx.UI.Forms.MovieForm;
 
-public class ManageMovies extends Window{
+public class ManageMovies extends Window {
 
     private ObservableList<Movie> moviesList;
 
-    public ManageMovies(VBox layout, Database db, Stage login, Stage mainWindow, User userLoggedIn, VBox showingsTableView){
+    public ManageMovies(VBox layout, Database db, Stage login, Stage mainWindow, User userLoggedIn, VBox showingsTableView) {
         //Initialize data
         loginWindow = login;
         mainLayout = layout;
@@ -87,12 +87,12 @@ public class ManageMovies extends Window{
         btn_AddMovie.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if (!txt_Duration.getText().equals("") && !txt_Title.getText().equals("")){
+                if (!txt_Duration.getText().equals("") && !txt_Title.getText().equals("")) {
 
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to add this movie?");
                     alert.setTitle("Add movie");
                     alert.showAndWait().ifPresent(response -> {
-                        if (response != ButtonType.CANCEL){
+                        if (response != ButtonType.CANCEL) {
 
                             //Create new movie
                             Movie newMovie = new Movie(txt_Title.getText(), cmb_Price.getValue(), Integer.parseInt(txt_Duration.getText()));
@@ -100,26 +100,31 @@ public class ManageMovies extends Window{
                             //Check if movie exists
                             boolean exists = false;
 
-                            for(Movie m: db.getMovies()){
+                            for (Movie m : db.getMovies()) {
                                 if (m.getTitle().equals(newMovie.getTitle())) {
                                     exists = true;
                                     break;
                                 }
                             }
                             //Add the new movie to the list if it does not already exist
-                            if (!exists){
+                            if (!exists) {
                                 db.getMovies().add(newMovie);
                                 moviesList = FXCollections.observableArrayList(db.getMovies());
                                 tv_Movies.setItems(moviesList);
                             }
                             //Show an alert when movie already exists
-                            else{
+                            else {
                                 new Alert(Alert.AlertType.ERROR, "Movie title already exists").show();
                             }
 
                         }
                     });
 
+                }
+                else{
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Please fill all the fields first!");
+                    alert.setTitle("Empty fields");
+                    alert.show();
                 }
             }
         });
@@ -135,7 +140,7 @@ public class ManageMovies extends Window{
 
     }
 
-    protected void setupManageMoviesScreen(){
+    protected void setupManageMoviesScreen() {
         //Get the MenuBar from the layout and set the visibility of the MenuItem from the current page to false
         //And set the visibility of the purchase tickets and manage showings MenuItem to true to enable the user to go switch menus
         MenuBar menuBar = (MenuBar) mainLayout.getChildren().get(0);
@@ -181,7 +186,7 @@ public class ManageMovies extends Window{
 
     }
 
-    private TableView setUpTableView(){
+    private TableView setUpTableView() {
         TableView<Movie> tableView = new TableView<>();
 
         tableView.setEditable(true);

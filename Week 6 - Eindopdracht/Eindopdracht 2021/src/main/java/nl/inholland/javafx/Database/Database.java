@@ -1,7 +1,10 @@
 package nl.inholland.javafx.Database;
 
-import nl.inholland.javafx.Models.*;
 import nl.inholland.javafx.Models.Enums.UserType;
+import nl.inholland.javafx.Models.Movie;
+import nl.inholland.javafx.Models.Room;
+import nl.inholland.javafx.Models.Showing;
+import nl.inholland.javafx.Models.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -9,13 +12,13 @@ import java.util.List;
 
 public class Database {
 
-    private List<Movie> movies;
-    private List<User> users;
-    private List<Showing> showingsRoom1;
-    private List<Showing> showingsRoom2;
-    private List<Room> rooms;
+    private final List<Movie> movies;
+    private final List<User> users;
+    private final List<Showing> showingsRoom1;
+    private final List<Showing> showingsRoom2;
+    private final List<Room> rooms;
 
-    public Database(){
+    public Database() {
         movies = createMovies();
         users = createUsers();
         rooms = createRooms();
@@ -45,17 +48,17 @@ public class Database {
     }
 
     //Fill the lists
-    private List<Movie> createMovies(){
+    private List<Movie> createMovies() {
 
         List<Movie> movies = new ArrayList<>();
-        movies.add(new Movie("Venom: Let There Be Carnage",  12.20, 120));
-        movies.add(new Movie("Spider-Man: No Way Home",16.00, 150));
+        movies.add(new Movie("Venom: Let There Be Carnage", 12.20, 120));
+        movies.add(new Movie("Spider-Man: No Way Home", 16.00, 150));
 
         return movies;
 
     }
 
-    private List<User> createUsers(){
+    private List<User> createUsers() {
         List<User> users = new ArrayList<>();
         users.add(new User("PietJanKlaas", "123huts", UserType.USER));
         users.add(new User("Klaas", "tester", UserType.ADMIN));
@@ -65,7 +68,7 @@ public class Database {
         return users;
     }
 
-    private List<Room> createRooms(){
+    private List<Room> createRooms() {
         List<Room> rooms = new ArrayList<>();
 
         rooms.add(new Room("Room 1", this, 400));
@@ -74,7 +77,7 @@ public class Database {
         return rooms;
     }
 
-    private List<Showing> createShowingsRoom1(){
+    private List<Showing> createShowingsRoom1() {
         List<Showing> showings = new ArrayList<>();
 
         Room room1 = rooms.get(0);
@@ -85,7 +88,7 @@ public class Database {
         return showings;
     }
 
-    private List<Showing> createShowingsRoom2(){
+    private List<Showing> createShowingsRoom2() {
         List<Showing> showings = new ArrayList<>();
 
         Room room2 = rooms.get(1);
@@ -97,12 +100,11 @@ public class Database {
     }
 
     //Checks the name of the room and sets the right showings list
-    public List<Showing> getShowingsPerRoom(String name){
+    public List<Showing> getShowingsPerRoom(String name) {
 
-        if (name.equals("Room 1")){
+        if (name.equals("Room 1")) {
             return showingsRoom1;
-        }
-        else if (name.equals("Room 2")){
+        } else if (name.equals("Room 2")) {
             return showingsRoom2;
         }
 

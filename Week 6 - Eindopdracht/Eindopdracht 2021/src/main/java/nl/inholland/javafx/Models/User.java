@@ -1,17 +1,18 @@
 package nl.inholland.javafx.Models;
 
 import nl.inholland.javafx.Models.Enums.UserType;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class User{
+public class User {
 
-    private String username;
-    private String password;
-    private UserType userType;
-    private List<Ticket> tickets;
+    private final String username;
+    private final String password;
+    private final UserType userType;
+    private final List<Ticket> tickets;
 
-    public User(String username, String password, UserType userType){
+    public User(String username, String password, UserType userType) {
         this.username = username;
         this.password = password;
         this.userType = userType;
@@ -30,7 +31,7 @@ public class User{
         return userType;
     }
 
-    public void addTicket(Ticket ticket){
+    public void addTicket(Ticket ticket) {
         tickets.add(ticket);
     }
 

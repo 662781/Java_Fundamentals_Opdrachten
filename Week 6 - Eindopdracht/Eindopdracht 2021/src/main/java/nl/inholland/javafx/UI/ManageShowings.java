@@ -7,11 +7,17 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nl.inholland.javafx.Database.Database;
-import nl.inholland.javafx.Models.*;
+import nl.inholland.javafx.Models.Movie;
+import nl.inholland.javafx.Models.Room;
+import nl.inholland.javafx.Models.Showing;
+import nl.inholland.javafx.Models.User;
 import nl.inholland.javafx.UI.Forms.ShowingForm;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -20,14 +26,15 @@ import java.util.List;
 
 public class ManageShowings extends Window {
 
-    private List<Movie> movies;
-    private List<Room> rooms;
-    private List<String> movieTitles, roomNames;
+    private final List<Movie> movies;
+    private final List<Room> rooms;
+    private final List<String> movieTitles;
+    private final List<String> roomNames;
     private ObservableList<Showing> showingsListRoom1, showingsListRoom2;
-    private VBox showingsTableView;
+    private final VBox showingsTableView;
 
 
-    public ManageShowings(VBox layout, Database db, Stage login, Stage mainWindow, User userLoggedIn, VBox showingsTableView){
+    public ManageShowings(VBox layout, Database db, Stage login, Stage mainWindow, User userLoggedIn, VBox showingsTableView) {
 
         //Initialize data
         loginWindow = login;
@@ -40,7 +47,6 @@ public class ManageShowings extends Window {
         rooms = db.getRooms();
         movieTitles = new ArrayList<>();
         roomNames = new ArrayList<>();
-
 
 
         //Apply settings for the Manage Showings screen
@@ -119,16 +125,16 @@ public class ManageShowings extends Window {
             public void changed(ObservableValue<? extends String> observableValue, String oldSelection, String newSelection) {
                 Movie selectedMovie = null;
 
-                for (Movie movie: movies){
-                    if (movie.getTitle().equals(newSelection)){
+                for (Movie movie : movies) {
+                    if (movie.getTitle().equals(newSelection)) {
                         selectedMovie = movie;
                     }
                 }
 
                 //Tries to set the start and end time label text + catches an exception (e.g. not able to parse to LocalTime)
-                try{
+                try {
                     LocalDate dateStart = dp_StartDate.getValue();
-                    if (!txt_StartTime.getText().equals("")){
+                    if (!txt_StartTime.getText().equals("")) {
 
                         //Gets the date and time + adds them into a LocalDateTime object
                         LocalTime timeStart = LocalTime.parse(txt_StartTime.getText());
@@ -137,12 +143,10 @@ public class ManageShowings extends Window {
                         //Sets the text of the labels
                         String endTime = startDateTime.plusMinutes(selectedMovie.getDuration()).toString();
                         lbl_EndTime.setText(endTime);
-                    }
-                    else{
+                    } else {
                         lbl_EndTime.setText("End unknown");
                     }
-                }
-                catch (Exception ex){
+                } catch (Exception ex) {
                     new Alert(Alert.AlertType.INFORMATION, ex.getMessage()).show();
                 }
 
@@ -156,8 +160,8 @@ public class ManageShowings extends Window {
             public void changed(ObservableValue<? extends String> observableValue, String oldSelection, String newSelection) {
                 Room selectedRoom = null;
 
-                for (Room room: rooms){
-                    if (room.getRoomName().equals(cmb_Room.getValue())){
+                for (Room room : rooms) {
+                    if (room.getRoomName().equals(cmb_Room.getValue())) {
                         selectedRoom = room;
                     }
                 }
@@ -170,9 +174,9 @@ public class ManageShowings extends Window {
             @Override
             public void handle(ActionEvent actionEvent) {
 
-                try{
+                try {
                     //Checks if a start time is entered
-                    if (!txt_StartTime.getText().equals("")){
+                    if (!txt_StartTime.getText().equals("")) {
 
                         //Gets the date and time + adds them into a LocalDateTime object
                         LocalDate dateStart = dp_StartDate.getValue();
@@ -182,11 +186,10 @@ public class ManageShowings extends Window {
                         //Gets the Movie object from the list using the movie title from the ComboBox
                         Movie selectedMovie = null;
 
-                        for (Movie movie: movies){
-                            if (movie.getTitle().equals(cmb_MovieTitle.getValue())){
+                        for (Movie movie : movies) {
+                            if (movie.getTitle().equals(cmb_MovieTitle.getValue())) {
                                 selectedMovie = movie;
-                            }
-                            else{
+                            } else {
                                 selectedMovie = db.getMovies().get(0);
                             }
                         }
@@ -194,11 +197,10 @@ public class ManageShowings extends Window {
                         //Gets the Room object from the list using the room name from the ComboBox
                         Room selectedRoom = null;
 
-                        for (Room room: rooms){
-                            if (room.getRoomName().equals(cmb_Room.getValue())){
+                        for (Room room : rooms) {
+                            if (room.getRoomName().equals(cmb_Room.getValue())) {
                                 selectedRoom = room;
-                            }
-                            else{
+                            } else {
                                 selectedRoom = db.getRooms().get(0);
                             }
                         }
@@ -209,40 +211,36 @@ public class ManageShowings extends Window {
                         boolean overlap = false;
 
                         //Checks for the selected room
-                        for (Showing showing: db.getShowingsPerRoom(selectedRoom.getRoomName())){
-                            if (!(newShowing.getStartTime().compareTo(showing.getEndTime().plusMinutes(15)) >= 0) && !(newShowing.getEndTime().compareTo(showing.getStartTime().minusMinutes(15)) <= 0)){
+                        for (Showing showing : db.getShowingsPerRoom(selectedRoom.getRoomName())) {
+                            if (!(newShowing.getStartTime().compareTo(showing.getEndTime().plusMinutes(15)) >= 0) && !(newShowing.getEndTime().compareTo(showing.getStartTime().minusMinutes(15)) <= 0)) {
                                 overlap = true;
                                 break;
                             }
 
                         }
 
-                        if (!overlap){
+                        if (!overlap) {
                             //Insert new showing into list
                             db.getShowingsPerRoom(selectedRoom.getRoomName()).add(newShowing);
                             //Reload lists to show the new showing in the list
-                            if (selectedRoom.getRoomName().equals("Room 1")){
+                            if (selectedRoom.getRoomName().equals("Room 1")) {
                                 showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
                                 tv_ShowingsRoom1.setItems(showingsListRoom1);
-                            }
-                            else{
+                            } else {
                                 showingsListRoom2 = FXCollections.observableArrayList(db.getShowingsRoom2());
                                 tv_ShowingsRoom2.setItems(showingsListRoom2);
                             }
-                        }
-                        else{
+                        } else {
                             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please enter date and time that don't overlap with other showings in the same room");
                             alert.setTitle("Overlap");
                             alert.show();
                         }
-                    }
-                    else{
+                    } else {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION, "Please enter a time before submitting");
                         alert.setTitle("Empty field");
                         alert.show();
                     }
-                }
-                catch (Exception ex){
+                } catch (Exception ex) {
                     new Alert(Alert.AlertType.ERROR, ex.getMessage()).show();
                 }
             }
@@ -263,7 +261,7 @@ public class ManageShowings extends Window {
 
     }
 
-    protected void setupManageShowingsScreen(){
+    protected void setupManageShowingsScreen() {
 
         //Get the MenuBar from the layout and set the visibility of the MenuItem from the current page to false
         //And set the visibility of the purchase tickets MenuItem to true to enable the user to switch menus

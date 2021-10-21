@@ -15,11 +15,11 @@ import nl.inholland.javafx.Models.User;
 import java.util.List;
 import java.util.Objects;
 
-public class Login extends Window{
+public class Login extends Window {
 
     private PurchaseTickets main;
 
-    public Login(Database db){
+    public Login(Database db) {
 
         window = new Stage();
 
@@ -57,9 +57,9 @@ public class Login extends Window{
             @Override
             public void handle(ActionEvent actionEvent) {
                 //Checks if field are empty, if not, it checks the username and password
-                if (!Objects.equals(usernameInputText.getText(), "") && !Objects.equals(passwordInputText.getText(), "")){
+                if (!Objects.equals(usernameInputText.getText(), "") && !Objects.equals(passwordInputText.getText(), "")) {
 
-                    if(passwordCheck(usernameInputText.getText(), passwordInputText.getText(), users)){
+                    if (passwordCheck(usernameInputText.getText(), passwordInputText.getText(), users)) {
 
                         //Show alert when logged in successfully
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -77,8 +77,7 @@ public class Login extends Window{
 
                         //Create new MainWindow
                         main = new PurchaseTickets(window, db, u);
-                    }
-                    else{
+                    } else {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Error");
                         alert.setHeaderText("System couldn't find a match; wrong username or password");
@@ -93,7 +92,7 @@ public class Login extends Window{
 
     }
 
-    public VBox setLayout(){
+    public VBox setLayout() {
 
         //Create main vertical layout
         VBox layout = new VBox();
@@ -112,7 +111,7 @@ public class Login extends Window{
         Label lbl_LogoTitle = new Label("Fabulous Cinema");
         lbl_LogoTitle.setId("TitleLabelLogin");
         lbl_LogoTitle.setPrefSize(window.getWidth(), 120);
-        lbl_LogoTitle.setPadding(new Insets(10,10,10,10));
+        lbl_LogoTitle.setPadding(new Insets(10, 10, 10, 10));
 
         //Create empty label
         Label lbl_Stripe = new Label();
@@ -153,19 +152,14 @@ public class Login extends Window{
         return layout;
     }
 
-    private boolean passwordCheck(String username, String password, List<User> people)
-    {
+    private boolean passwordCheck(String username, String password, List<User> people) {
         boolean checkPassed = false;
 
-        for (User u: people)
-        {
-            if (Objects.equals(username, u.getUsername()) && Objects.equals(password, u.getPassword()))
-            {
+        for (User u : people) {
+            if (Objects.equals(username, u.getUsername()) && Objects.equals(password, u.getPassword())) {
                 checkPassed = true;
                 break;
-            }
-            else
-            {
+            } else {
                 checkPassed = false;
             }
         }
@@ -173,14 +167,11 @@ public class Login extends Window{
         return checkPassed;
     }
 
-    User getUserInfo(String username, List<User> users)
-    {
+    User getUserInfo(String username, List<User> users) {
         User user = null;
 
-        for (User u: users)
-        {
-            if (Objects.equals(username, u.getUsername()))
-            {
+        for (User u : users) {
+            if (Objects.equals(username, u.getUsername())) {
                 user = u;
             }
         }

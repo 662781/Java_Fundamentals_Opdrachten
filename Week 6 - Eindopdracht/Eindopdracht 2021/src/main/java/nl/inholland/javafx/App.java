@@ -10,7 +10,7 @@ public class App extends Application {
     @Override
     public void start(Stage window) throws Exception {
         //Show the login window when app starts
-        Database db  = new Database();
+        Database db = new Database();
         Login loginWindow = new Login(db);
     }
 }

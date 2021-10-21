@@ -12,12 +12,12 @@ import nl.inholland.javafx.Models.User;
 
 import java.util.List;
 
-public class TicketForm extends Form{
+public class TicketForm extends Form {
 
-    private User userLoggedIn;
-    private List<Integer> amountOfSeatsChoices;
+    private final User userLoggedIn;
+    private final List<Integer> amountOfSeatsChoices;
 
-    public TicketForm(User userLoggedIn, List<Integer> amountOfSeatsChoices){
+    public TicketForm(User userLoggedIn, List<Integer> amountOfSeatsChoices) {
         this.userLoggedIn = userLoggedIn;
         this.amountOfSeatsChoices = amountOfSeatsChoices;
         form = createForm();
@@ -28,7 +28,7 @@ public class TicketForm extends Form{
     }
 
     @Override
-    public GridPane createForm(){
+    public GridPane createForm() {
         //Create and setup ticketForm
         GridPane ticketForm = new GridPane();
 
