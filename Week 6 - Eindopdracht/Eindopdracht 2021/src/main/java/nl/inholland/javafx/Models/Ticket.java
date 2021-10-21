@@ -8,12 +8,13 @@ public class Ticket {
     //Amount of seats the user purchased
     private int amtOfSeats;
 
-    public Ticket(double price, String movieTitle, int amtOfSeats,String userName ,Showing showing){
-        this.price = price;
-        this.movieTitle = movieTitle;
+    public Ticket(Showing showing, String userName, int amtOfSeats){
+        this.showing = showing;
+        this.price = showing.getMovie().getTicketPrice();
+        this.movieTitle = showing.getMovie().getTitle();
         this.userName = userName;
         this.amtOfSeats = amtOfSeats;
-        this.showing = showing;
+
     }
 
     //Getters

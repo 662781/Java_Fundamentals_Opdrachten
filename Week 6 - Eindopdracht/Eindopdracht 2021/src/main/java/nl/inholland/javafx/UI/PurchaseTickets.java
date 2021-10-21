@@ -93,14 +93,14 @@ public class PurchaseTickets extends Window{
         lbl_ShowingsMenuTitle.setText("Purchase Tickets");
 
         //Remove showingForm and add ticketForm
-        TicketForm ticketForm = new TicketForm(userLoggedIn, new ArrayList<>());
         mainLayout.getChildren().remove(2);
-        mainLayout.getChildren().add(2, ticketForm.getTicketForm());
+        mainLayout.getChildren().add(2, new TicketForm(userLoggedIn, new ArrayList<>()).getTicketForm());
 
         //Remove potential Movie TableView and add Showings TableView
         VBox showingsMain = (VBox) setLayout().getChildren().get(1);
-        mainLayout.getChildren().remove(1);
-        mainLayout.getChildren().add(1, showingsMain);
+        HBox showingsHBox = (HBox) showingsMain.getChildren().get(1);
+        mainVBoxShowings.getChildren().remove(1);
+        mainVBoxShowings.getChildren().add(1, showingsHBox);
 
         handleAllActions(mainLayout);
 
@@ -131,29 +131,29 @@ public class PurchaseTickets extends Window{
         helpMenu.getItems().addAll(aboutItem);
         logoutMenu.getItems().addAll(logoutItem);
 
-        //Hide the MenuItem from the current page
-        adminMenu.getItems().get(2).setVisible(false);
-
         //Add all the Menus to the MenuBar
         menuBar.getMenus().addAll(adminMenu, helpMenu, logoutMenu);
+
+        //Hide the menu of the current page
+        menuBar.getMenus().get(0).getItems().get(2).setVisible(false);
 
 
         //Create center part of the window
 
         //Create main VBox for this part
-        VBox mainVBoxTickets = new VBox();
-        mainVBoxTickets.setPadding(new Insets(10));
+        VBox mainVBoxShowings = new VBox();
+        mainVBoxShowings.setPadding(new Insets(10));
 
         //Create Label with title and add to VBox
         Label lbl_titleTickets = new Label("Purchase Tickets");
         lbl_titleTickets.setId("ticketsTitle");
-        mainVBoxTickets.getChildren().addAll(lbl_titleTickets);
+        mainVBoxShowings.getChildren().addAll(lbl_titleTickets);
 
         //Create secondary Node (HBox) for the 2 TableViews
-        HBox hBoxTickets = new HBox();
+        HBox hBoxShowings = new HBox();
 
-        hBoxTickets.setPadding(new Insets(10));
-        hBoxTickets.setSpacing(10);
+        hBoxShowings.setPadding(new Insets(10));
+        hBoxShowings.setSpacing(10);
 
         //Create 2 HBoxes for the 2 TableViews
         VBox showingTableRoom1 = new VBox();
@@ -184,11 +184,11 @@ public class PurchaseTickets extends Window{
         showingTableRoom2.getChildren().addAll(lbl_tableRoom2Title, tv_ShowingsRoom2);
 
         //Add the 2 sub HBoxes (TableViews) to the Ticket HBox
-        hBoxTickets.getChildren().addAll(showingTableRoom1, showingTableRoom2);
-        hBoxTickets.setPadding(new Insets(10, 10, 10, 10));
-        hBoxTickets.setId("HBoxTickets");
+        hBoxShowings.getChildren().addAll(showingTableRoom1, showingTableRoom2);
+        hBoxShowings.setPadding(new Insets(10, 10, 10, 10));
+        hBoxShowings.setId("HBoxTickets");
 
-        mainVBoxTickets.getChildren().addAll(hBoxTickets);
+        mainVBoxShowings.getChildren().addAll(hBoxShowings);
 
         //Gets the ticketForm from the TicketForm class
         TicketForm ticketForm = new TicketForm(userLoggedIn, amountOfSeatsChoices);
@@ -201,7 +201,7 @@ public class PurchaseTickets extends Window{
 
 
         //Add all nodes to the main layout
-        layout.getChildren().addAll(menuBar, mainVBoxTickets, formGridPane, lbl_Stripe);
+        layout.getChildren().addAll(menuBar, mainVBoxShowings, formGridPane, lbl_Stripe);
 
         return layout;
     }
@@ -343,7 +343,7 @@ public class PurchaseTickets extends Window{
                                 alert.showAndWait().ifPresent(response -> {
                                     if (response != ButtonType.CANCEL){
                                         //Create new Ticket
-                                        Ticket ticket = new Ticket(tv_ShowingsRoom1.getSelectionModel().getSelectedItem().getMovie().getTicketPrice(),tv_ShowingsRoom1.getSelectionModel().getSelectedItem().getMovie().getTitle(),cmb_AmtOfSeats.getValue(),txt_CustomerName.getText(),newShowing);
+                                        Ticket ticket = new Ticket(newShowing, txt_CustomerName.getText(), cmb_AmtOfSeats.getValue());
 
                                         //Show alert to confirm purchase
                                         Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie!");
@@ -362,7 +362,6 @@ public class PurchaseTickets extends Window{
                                         //Reload the list to show the changes
                                         showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
                                         tv_ShowingsRoom1.setItems(showingsListRoom1);
-                                        tv_ShowingsRoom1.getSelectionModel().clearSelection();
 
                                     }
                                 });
@@ -409,7 +408,7 @@ public class PurchaseTickets extends Window{
                                 alert.showAndWait().ifPresent(response -> {
                                     if (response != ButtonType.CANCEL){
                                         //Create new Ticket
-                                        Ticket ticket = new Ticket(tv_ShowingsRoom2.getSelectionModel().getSelectedItem().getMovie().getTicketPrice(),tv_ShowingsRoom2.getSelectionModel().getSelectedItem().getMovie().getTitle(),cmb_AmtOfSeats.getValue(),txt_CustomerName.getText(),newShowing);
+                                        Ticket ticket = new Ticket(newShowing, txt_CustomerName.getText(), cmb_AmtOfSeats.getValue());
 
                                         //Show alert to confirm purchase
                                         Alert alertConfirm = new Alert(Alert.AlertType.INFORMATION,"Enjoy the movie!");

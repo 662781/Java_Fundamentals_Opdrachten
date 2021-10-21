@@ -129,28 +129,26 @@ public class ManageShowings extends Window {
                     }
                 }
 
-                //Gets the date and time + adds them into a LocalDateTime object
-                LocalDate dateStart = startDate.getValue();
-                if (!startTime.getText().equals("")){
+                //Tries to set the start and end time label text + catches an exception (e.g. not able to parse to LocalTime)
+                try{
+                    LocalDate dateStart = startDate.getValue();
+                    if (!startTime.getText().equals("")){
 
-                    LocalTime timeStart = LocalTime.parse(startTime.getText());
-                    LocalDateTime startDateTime = LocalDateTime.of(dateStart, timeStart);
+                        //Gets the date and time + adds them into a LocalDateTime object
+                        LocalTime timeStart = LocalTime.parse(startTime.getText());
+                        LocalDateTime startDateTime = LocalDateTime.of(dateStart, timeStart);
 
-                    //Sets the text of the labels
-                    String endTime = startDateTime.plusMinutes(selectedMovie.getDuration()).toString();
-                    lbl_EndTime.setText(endTime);
-                }
-                else{
-                    lbl_EndTime.setText("End unknown");
-                }
-
-                startTime.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observableValue, String oldContent, String newContent) {
-
+                        //Sets the text of the labels
+                        String endTime = startDateTime.plusMinutes(selectedMovie.getDuration()).toString();
+                        lbl_EndTime.setText(endTime);
                     }
-                });
-
+                    else{
+                        lbl_EndTime.setText("End unknown");
+                    }
+                }
+                catch (Exception ex){
+                    new Alert(Alert.AlertType.INFORMATION, ex.getMessage()).show();
+                }
 
                 lbl_TicketPrice.setText(String.format("%.2f", selectedMovie.getTicketPrice()));
             }
@@ -274,15 +272,14 @@ public class ManageShowings extends Window {
         Label lbl_ShowingsMenuTitle = (Label) mainVBoxShowings.getChildren().get(0);
         lbl_ShowingsMenuTitle.setText("Manage showings");
 
-        //Remove ticketForm and add showingForm
+        //Remove other form and add showingForm
         mainLayout.getChildren().remove(2);
-        ShowingForm showingForm = new ShowingForm(movieTitles, roomNames, movies, rooms);
-        mainLayout.getChildren().add(2, showingForm.getShowingForm());
+        mainLayout.getChildren().add(2, new ShowingForm(movieTitles, roomNames, movies, rooms).getShowingForm());
 
-        //Remove potential Movie TableView and add Showings TableView
-        VBox showingsMain = (VBox) showingsTableView.getChildren().get(1);
-        mainLayout.getChildren().remove(1);
-        mainLayout.getChildren().add(1, showingsMain);
+        //Remove potential Movie TableView VBox and add Showings TableView HBox
+        HBox hBoxShowings = (HBox) showingsTableView.getChildren().get(1);
+        mainVBoxShowings.getChildren().remove(1);
+        mainVBoxShowings.getChildren().add(1, hBoxShowings);
 
     }
 }

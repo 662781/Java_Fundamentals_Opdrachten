@@ -51,12 +51,13 @@ public class MovieForm extends Form{
         prices = FXCollections.observableArrayList(pricesList);
         cmb_Price.setItems(prices);
         cmb_Price.setPromptText("Price");
+        cmb_Price.getSelectionModel().selectFirst();
 
         Button btn_AddMovie = new Button("Add Movie");
         Button btn_Clear = new Button("Clear");
 
         //Add nodes to new From GridPane
-        movieForm.addRow(0, txt_Title,cmb_Price, txt_Duration);
+        movieForm.addRow(0, txt_Title, cmb_Price, txt_Duration);
         movieForm.addRow(1, btn_AddMovie, btn_Clear);
 
         return movieForm;
