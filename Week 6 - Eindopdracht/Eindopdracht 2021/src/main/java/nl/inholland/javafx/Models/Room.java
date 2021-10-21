@@ -7,15 +7,15 @@ import java.util.List;
 public class Room {
 
     private final Database db;
-    private final List<Showing> showingList;
-    private int amtOfSeats;
     private final String roomName;
+    private final int amtOfSeats;
+    private List<Showing> showingList;
+
 
     public Room(String roomName, Database db, int amtOfSeats) {
         this.db = db;
         this.roomName = roomName;
         this.amtOfSeats = amtOfSeats;
-        showingList = db.getShowingsPerRoom(this.roomName);
     }
 
     //Getters
@@ -31,13 +31,9 @@ public class Room {
         return amtOfSeats;
     }
 
-    //Setters
-    public void setAmtOfSeats(int amtOfSeats) {
-        this.amtOfSeats = amtOfSeats;
-    }
-
     //Add showing method
     public void addShowing(Showing showing) {
+        showingList = db.getShowingsPerRoom(this.roomName);
         showingList.add(showing);
     }
 

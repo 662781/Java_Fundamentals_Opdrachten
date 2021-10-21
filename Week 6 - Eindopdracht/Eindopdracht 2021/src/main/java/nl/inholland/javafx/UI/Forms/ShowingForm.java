@@ -71,7 +71,16 @@ public class ShowingForm extends Form {
         cmb_Room.setItems(rooms);
         cmb_Room.getSelectionModel().selectFirst();
 
+        //Create DatePicker for start date and disable dates in the past
         DatePicker startDatePicker = new DatePicker(LocalDate.now());
+        startDatePicker.setDayCellFactory(picker -> new DateCell() {
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                LocalDate today = LocalDate.now();
+
+                setDisable(empty || date.compareTo(today) < 0);
+            }
+        });
 
         TextField txt_StartTime = new TextField();
         txt_StartTime.setPromptText("00:00");

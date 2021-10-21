@@ -27,8 +27,8 @@ import java.util.List;
 
 public class PurchaseTickets extends Window {
 
-    private ObservableList<Showing> showingsListRoom1, showingsListRoom2;
     private final List<Integer> amountOfSeatsChoices;
+    private ObservableList<Showing> showingsListRoom1, showingsListRoom2;
 
     //Constructor for first initialization (new Stage)
     public PurchaseTickets(Stage loginWindow, Database db, User userLoggedIn) {

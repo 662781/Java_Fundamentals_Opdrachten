@@ -13,8 +13,8 @@ import java.util.List;
 
 public class MovieForm extends Form {
 
-    private ObservableList<Double> prices;
     private final List<Double> pricesList;
+    private ObservableList<Double> prices;
 
     public MovieForm() {
         pricesList = new ArrayList<>();

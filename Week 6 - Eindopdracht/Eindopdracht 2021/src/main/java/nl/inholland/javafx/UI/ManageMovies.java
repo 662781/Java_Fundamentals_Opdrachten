@@ -120,8 +120,7 @@ public class ManageMovies extends Window {
                         }
                     });
 
-                }
-                else{
+                } else {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Please fill all the fields first!");
                     alert.setTitle("Empty fields");
                     alert.show();

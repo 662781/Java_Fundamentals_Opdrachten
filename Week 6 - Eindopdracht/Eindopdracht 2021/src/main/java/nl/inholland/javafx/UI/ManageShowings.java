@@ -30,8 +30,8 @@ public class ManageShowings extends Window {
     private final List<Room> rooms;
     private final List<String> movieTitles;
     private final List<String> roomNames;
-    private ObservableList<Showing> showingsListRoom1, showingsListRoom2;
     private final VBox showingsTableView;
+    private ObservableList<Showing> showingsListRoom1, showingsListRoom2;
 
 
     public ManageShowings(VBox layout, Database db, Stage login, Stage mainWindow, User userLoggedIn, VBox showingsTableView) {
@@ -220,8 +220,8 @@ public class ManageShowings extends Window {
                         }
 
                         if (!overlap) {
-                            //Insert new showing into list
-                            db.getShowingsPerRoom(selectedRoom.getRoomName()).add(newShowing);
+                            //Add new showing
+                            selectedRoom.addShowing(newShowing);
                             //Reload lists to show the new showing in the list
                             if (selectedRoom.getRoomName().equals("Room 1")) {
                                 showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
