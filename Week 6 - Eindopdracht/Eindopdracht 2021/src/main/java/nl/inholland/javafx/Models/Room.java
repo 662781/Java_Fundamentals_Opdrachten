@@ -20,6 +20,7 @@ public class Room {
 
     //Getters
     public List<Showing> getShowingList() {
+        showingList = db.getShowingsPerRoom(roomName);
         return showingList;
     }
 

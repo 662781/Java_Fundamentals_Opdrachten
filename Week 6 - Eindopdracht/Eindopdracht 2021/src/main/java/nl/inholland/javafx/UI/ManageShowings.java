@@ -211,7 +211,7 @@ public class ManageShowings extends Window {
                         boolean overlap = false;
 
                         //Checks for the selected room
-                        for (Showing showing : db.getShowingsPerRoom(selectedRoom.getRoomName())) {
+                        for (Showing showing : selectedRoom.getShowingList()) {
                             if (!(newShowing.getStartTime().compareTo(showing.getEndTime().plusMinutes(15)) >= 0) && !(newShowing.getEndTime().compareTo(showing.getStartTime().minusMinutes(15)) <= 0)) {
                                 overlap = true;
                                 break;
