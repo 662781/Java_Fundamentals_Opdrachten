@@ -10,7 +10,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import nl.inholland.javafx.Database.Database;
 import nl.inholland.javafx.Models.Movie;
 import nl.inholland.javafx.Models.Room;
@@ -18,6 +20,9 @@ import nl.inholland.javafx.Models.Showing;
 import nl.inholland.javafx.Models.User;
 import nl.inholland.javafx.UI.Forms.ShowingForm;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -87,6 +92,62 @@ public class ManageShowings extends Window {
                 //Show the LoginWindow for logging out and close this window
                 loginWindow.show();
                 window.close();
+            }
+        });
+
+        //Create event on export showings menu-item that exports the current lists of showings to an CSV file in the chosen directory
+        menuBar.getMenus().get(0).getItems().get(3).setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                //Create new FileChooser, set the default directory and set an extension filter to only save into csv files
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv"));
+                fileChooser.setInitialDirectory(new File("src/main/resources/showings"));
+
+                File file = fileChooser.showSaveDialog(new Stage());
+
+                if (file != null){
+                    try (PrintWriter writer = new PrintWriter(file)) {
+                        for (Showing show : db.getShowingsRoom1()) {
+                            //Creates new List with all values of the fields per showing
+                            List<String> showingValues = new ArrayList<>();
+                            showingValues.add(show.getStartTime().toString());
+                            showingValues.add(show.getEndTime().toString());
+                            showingValues.add(show.getRoom().getRoomName());
+                            showingValues.add(show.getMovie().getTitle());
+                            showingValues.add(Integer.toString(show.getRoom().getAmtOfSeats()));
+                            showingValues.add(Double.toString(show.getMovie().getTicketPrice()));
+                            StringBuilder sb = build(showingValues);
+                            writer.write(sb.toString());
+                        }
+                        for (Showing show : db.getShowingsRoom2()) {
+                            //Creates new List with all values of the fields per showing
+                            List<String> showingValues = new ArrayList<>();
+                            showingValues.add(show.getStartTime().toString());
+                            showingValues.add(show.getEndTime().toString());
+                            showingValues.add(show.getRoom().getRoomName());
+                            showingValues.add(show.getMovie().getTitle());
+                            showingValues.add(Integer.toString(show.getRoom().getAmtOfSeats()));
+                            showingValues.add(Double.toString(show.getMovie().getTicketPrice()));
+                            //Builds a String with all the values of the list and writes to file
+                            StringBuilder sb = build(showingValues);
+                            writer.write(sb.toString());
+                        }
+                        new Alert(Alert.AlertType.INFORMATION, "Current showings saved!").show();
+
+                    } catch (FileNotFoundException ex) {
+                        new Alert(Alert.AlertType.INFORMATION, ex.getMessage()).show();
+                    }
+                }
+
+            }
+        });
+
+        //Shows a new ExitConfirm window when the mainWindow is requested to close
+        window.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent windowEvent) {
+                new ExitConfirm(window);
             }
         });
 
@@ -270,9 +331,11 @@ public class ManageShowings extends Window {
         MenuItem showingsItem = adminMenu.getItems().get(0);
         MenuItem moviesItem = adminMenu.getItems().get(1);
         MenuItem ticketsItem = adminMenu.getItems().get(2);
+        MenuItem exportItem = adminMenu.getItems().get(3);
         showingsItem.setVisible(false);
         moviesItem.setVisible(true);
         ticketsItem.setVisible(true);
+        exportItem.setVisible(true);
 
         //Set window title
         window.setTitle("Fabulous Cinema | Manage Showings | " + userLoggedIn.getUsername());
@@ -291,5 +354,20 @@ public class ManageShowings extends Window {
         mainVBoxShowings.getChildren().remove(1);
         mainVBoxShowings.getChildren().add(1, hBoxShowings);
 
+    }
+
+    private StringBuilder build(List<String> values){
+        //Creates StringBuilder and adds values of the list to an array
+        StringBuilder sb = new StringBuilder();
+        String[] array = values.toArray(new String[6]);
+
+        //Reads the array and places comma's
+        for (String string : array) {
+            sb.append(string);
+            sb.append(",");
+        }
+        //Writes an empty line after every value
+        sb.append("\n");
+        return sb;
     }
 }

@@ -8,6 +8,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import nl.inholland.javafx.Models.User;
 
 import java.util.List;
@@ -50,6 +52,8 @@ public class TicketForm extends Form {
         Label lbl_ShowTitle = new Label();
         Label lbl_NrOfSeats = new Label("No. of seats");
         Label lbl_Name = new Label("Name");
+        Label lbl_SearchStatus = new Label();
+        lbl_SearchStatus.setId("SearchStatus");
 
         //Create ComboBox
         ComboBox<Integer> cmb_NrOfSeats = new ComboBox<>();
@@ -62,10 +66,12 @@ public class TicketForm extends Form {
         cmb_NrOfSeats.setItems(seats);
         cmb_NrOfSeats.getSelectionModel().selectFirst();
 
-        //Create TextField
+        //Create TextFields
         TextField txt_customerName = new TextField();
         txt_customerName.setPromptText("Username");
         txt_customerName.setText(userLoggedIn.getUsername());
+        TextField txt_SearchValue = new TextField();
+        txt_SearchValue.setPromptText("Search");
 
         //Create Buttons
         Button btn_Purchase = new Button("Purchase");
@@ -73,7 +79,7 @@ public class TicketForm extends Form {
 
         ticketForm.addRow(0, lbl_Room, lbl_RoomNumber, lbl_Title, lbl_ShowTitle);
         ticketForm.addRow(1, lbl_Start, lbl_StartTime, lbl_NrOfSeats, cmb_NrOfSeats, btn_Purchase);
-        ticketForm.addRow(2, lbl_End, lbl_EndTime, lbl_Name, txt_customerName, btn_Clear);
+        ticketForm.addRow(2, lbl_End, lbl_EndTime, lbl_Name, txt_customerName, btn_Clear, txt_SearchValue, lbl_SearchStatus);
 
         return ticketForm;
     }

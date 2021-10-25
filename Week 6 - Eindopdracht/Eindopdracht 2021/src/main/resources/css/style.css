@@ -79,3 +79,17 @@
     -fx-background-color: #a20512;
     -fx-font-weight: bold;
 }
+
+#SearchStatus{
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+}
+
+.exitConfirmButton{
+    -fx-font-size: 20;
+}
+
+#exitConfirmMessage{
+    -fx-font-size: 40;
+    -fx-font-weight: bold;
+}

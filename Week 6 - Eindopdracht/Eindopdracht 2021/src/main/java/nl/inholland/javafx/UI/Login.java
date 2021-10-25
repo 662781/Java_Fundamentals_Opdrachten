@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import nl.inholland.javafx.Database.Database;
 import nl.inholland.javafx.Models.User;
 
@@ -86,6 +87,14 @@ public class Login extends Window {
 
 
                 }
+            }
+        });
+
+        //Shows a new ExitConfirm window when the mainWindow is requested to close
+        window.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent windowEvent) {
+                new ExitConfirm(window);
             }
         });
 

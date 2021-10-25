@@ -14,6 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import nl.inholland.javafx.Database.Database;
 import nl.inholland.javafx.Models.Enums.UserType;
 import nl.inholland.javafx.Models.Showing;
@@ -120,9 +121,10 @@ public class PurchaseTickets extends Window {
         MenuItem showingsItem = new MenuItem("Manage Showings");
         MenuItem moviesItem = new MenuItem("Manage Movies");
         MenuItem ticketsItem = new MenuItem("Purchase Tickets");
+        MenuItem exportItem = new MenuItem("Export Showings");
 
         //Add the MenuItems to the Menus
-        adminMenu.getItems().addAll(showingsItem, moviesItem, ticketsItem);
+        adminMenu.getItems().addAll(showingsItem, moviesItem, ticketsItem, exportItem);
         helpMenu.getItems().addAll(aboutItem);
         logoutMenu.getItems().addAll(logoutItem);
 
@@ -131,6 +133,7 @@ public class PurchaseTickets extends Window {
 
         //Hide the menu of the current page
         menuBar.getMenus().get(0).getItems().get(2).setVisible(false);
+        menuBar.getMenus().get(0).getItems().get(3).setVisible(false);
 
 
         //Create center part of the window
@@ -283,6 +286,14 @@ public class PurchaseTickets extends Window {
                 window.close();
             }
         });
+
+        //Shows a new ExitConfirm window when the mainWindow is requested to close
+        window.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent windowEvent) {
+                new ExitConfirm(window);
+            }
+        });
     }
 
     private void handleTableViewActions(VBox layout) {
@@ -297,7 +308,9 @@ public class PurchaseTickets extends Window {
         Label lbl_Title = (Label) formGrid.getChildren().get(3);
         Label lbl_StartTime = (Label) formGrid.getChildren().get(5);
         Label lbl_EndTime = (Label) formGrid.getChildren().get(10);
+        Label lbl_SearchStatus = (Label) formGrid.getChildren().get(15);
         TextField txt_CustomerName = (TextField) formGrid.getChildren().get(12);
+        TextField txt_SearchValue = (TextField) formGrid.getChildren().get(14);
 
         //Get the ComboBox from the Form GridPane
         ComboBox<Integer> cmb_AmtOfSeats = (ComboBox<Integer>) formGrid.getChildren().get(7);
@@ -448,6 +461,52 @@ public class PurchaseTickets extends Window {
                 formGrid.setVisible(false);
             }
         });
+
+        try {
+            //Create listener on txt_SearchValue to sort the TableViews with the given value
+            txt_SearchValue.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observableValue, String oldInput, String newInput) {
+
+                    if (newInput.length() > 2){
+
+                        //Create new lists that contain the sorted values
+                        List<Showing> showingsRoom1Sorted = new ArrayList<>();
+                        List<Showing> showingsRoom2Sorted = new ArrayList<>();
+
+                        //Checks if any title in the Room 1 contains the new input
+                        for(Showing show: db.getShowingsRoom1()){
+                            if (show.getMovie().getTitle().contains(newInput)){
+                                showingsRoom1Sorted.add(show);
+                            }
+                        }
+                        //Checks if any title in the Room 2 contains the new input
+                        for(Showing show: db.getShowingsRoom2()){
+                            if (show.getMovie().getTitle().contains(newInput)){
+                                showingsRoom2Sorted.add(show);
+                            }
+                        }
+
+                        showingsListRoom1 = FXCollections.observableArrayList(showingsRoom1Sorted);
+                        showingsListRoom2 = FXCollections.observableArrayList(showingsRoom2Sorted);
+
+                    }
+                    else{
+                        showingsListRoom1 = FXCollections.observableArrayList(db.getShowingsRoom1());
+                        showingsListRoom2 = FXCollections.observableArrayList(db.getShowingsRoom2());
+
+                    }
+                    //Sets the items of the TableViews
+                    tv_ShowingsRoom1.setItems(showingsListRoom1);
+                    tv_ShowingsRoom2.setItems(showingsListRoom2);
+
+                }
+            });
+        }
+        catch (Exception ex){
+            //lbl_SearchStatus.setText(ex.getMessage());
+            lbl_SearchStatus.setText("No match");
+        }
     }
 
     public void handleAllActions(VBox layout) {

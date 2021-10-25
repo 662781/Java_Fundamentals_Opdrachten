@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import nl.inholland.javafx.Database.Database;
 import nl.inholland.javafx.Models.Movie;
 import nl.inholland.javafx.Models.User;
@@ -63,6 +64,14 @@ public class ManageMovies extends Window {
                 //Show the LoginWindow for logging out and close this window
                 loginWindow.show();
                 window.close();
+            }
+        });
+
+        //Shows a new ExitConfirm window when the mainWindow is requested to close
+        window.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent windowEvent) {
+                new ExitConfirm(window);
             }
         });
 
@@ -147,9 +156,11 @@ public class ManageMovies extends Window {
         MenuItem showingsItem = adminMenu.getItems().get(0);
         MenuItem moviesItem = adminMenu.getItems().get(1);
         MenuItem ticketsItem = adminMenu.getItems().get(2);
+        MenuItem exportItem = adminMenu.getItems().get(3);
         moviesItem.setVisible(false);
         showingsItem.setVisible(true);
         ticketsItem.setVisible(true);
+        exportItem.setVisible(false);
 
         //Set window title
         window.setTitle("Fabulous Cinema | Manage Movies | " + userLoggedIn.getUsername());
